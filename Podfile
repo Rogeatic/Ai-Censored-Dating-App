@@ -7,6 +7,5 @@ target 'BlurrrDatingApp' do
 
   # Pods for BlurrrDatingApp
   pod 'JitsiMeetSDK'
-  pod 'WebRTC-lib'
 
 end
