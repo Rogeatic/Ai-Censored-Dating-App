@@ -1,0 +1,6 @@
+framework module Pods_BlurrrDatingApp {
+  umbrella header "Pods-BlurrrDatingApp-umbrella.h"
+
+  export *
+  module * { export * }
+}
