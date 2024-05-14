@@ -41,7 +41,8 @@ struct JitsiMeetViewWrapper: UIViewRepresentable {
 
 struct ContentView: View {
     @State private var roomName: String? = nil
-    
+    @State private var isConnecting: Bool = false
+
     var body: some View {
         VStack {
             if let roomName = roomName {
@@ -49,10 +50,34 @@ struct ContentView: View {
                     .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
                     .ignoresSafeArea()
             } else {
-                Text("Connecting...")
-                    .onAppear {
-                        fetchRoomName()
+                if isConnecting {
+                    Text("Connecting...")
+                        .onAppear {
+                            fetchRoomName()
+                        }
+                } else {
+                    VStack {
+                        CameraPreviewView()
+                            .frame(height: 300)
+                            .cornerRadius(12)
+                            .padding()
+
+                        Text("Welcome to the App")
+                            .font(.largeTitle)
+                            .padding()
+
+                        Button(action: {
+                            isConnecting = true
+                        }) {
+                            Text("Start Video Call")
+                                .font(.title2)
+                                .padding()
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
                     }
+                }
             }
         }
     }
@@ -78,14 +103,3 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
-//import SwiftUI
-//struct ContentView : View {
-//    var body: some View {
-//        Text("HelloWorld")
-//    }
-//}
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ContentView()
-//    }
-//}

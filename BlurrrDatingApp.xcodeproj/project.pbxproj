@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2EE0D8B0C28504EAE963FC57 /* Pods_BlurrrDatingApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68CB59C7E01B910E007A22B7 /* Pods_BlurrrDatingApp.framework */; };
+		52734B402BF2FA270077EBFA /* CameraPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52734B3F2BF2FA270077EBFA /* CameraPreviewView.swift */; };
 		5299489F2BDF30E400F9947E /* BlurrrDatingAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5299489E2BDF30E400F9947E /* BlurrrDatingAppApp.swift */; };
 		529948A12BDF30E400F9947E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529948A02BDF30E400F9947E /* ContentView.swift */; };
 		529948A32BDF30E600F9947E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 529948A22BDF30E600F9947E /* Assets.xcassets */; };
@@ -15,6 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		52734B3F2BF2FA270077EBFA /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreviewView.swift; sourceTree = "<group>"; };
 		5299489B2BDF30E400F9947E /* BlurrrDatingApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlurrrDatingApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5299489E2BDF30E400F9947E /* BlurrrDatingAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlurrrDatingAppApp.swift; sourceTree = "<group>"; };
 		529948A02BDF30E400F9947E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -68,6 +70,7 @@
 			children = (
 				5299489E2BDF30E400F9947E /* BlurrrDatingAppApp.swift */,
 				529948A02BDF30E400F9947E /* ContentView.swift */,
+				52734B3F2BF2FA270077EBFA /* CameraPreviewView.swift */,
 				529948A22BDF30E600F9947E /* Assets.xcassets */,
 				529948A42BDF30E600F9947E /* Preview Content */,
 			);
@@ -207,6 +210,7 @@
 			files = (
 				529948A12BDF30E400F9947E /* ContentView.swift in Sources */,
 				5299489F2BDF30E400F9947E /* BlurrrDatingAppApp.swift in Sources */,
+				52734B402BF2FA270077EBFA /* CameraPreviewView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -313,7 +317,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -344,6 +348,8 @@
 				DEVELOPMENT_TEAM = RCFPNH9WHP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Capture user video for conferencing calls";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Capture user audio for conferencing calls";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -374,6 +380,8 @@
 				DEVELOPMENT_TEAM = RCFPNH9WHP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Capture user video for conferencing calls";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Capture user audio for conferencing calls";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
