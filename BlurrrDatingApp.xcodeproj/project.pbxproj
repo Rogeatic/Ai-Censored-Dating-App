@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2EE0D8B0C28504EAE963FC57 /* Pods_BlurrrDatingApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68CB59C7E01B910E007A22B7 /* Pods_BlurrrDatingApp.framework */; };
 		5299489F2BDF30E400F9947E /* BlurrrDatingAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5299489E2BDF30E400F9947E /* BlurrrDatingAppApp.swift */; };
 		529948A12BDF30E400F9947E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529948A02BDF30E400F9947E /* ContentView.swift */; };
 		529948A32BDF30E600F9947E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 529948A22BDF30E600F9947E /* Assets.xcassets */; };
@@ -19,6 +20,9 @@
 		529948A02BDF30E400F9947E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		529948A22BDF30E600F9947E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		529948A52BDF30E600F9947E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		68CB59C7E01B910E007A22B7 /* Pods_BlurrrDatingApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BlurrrDatingApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8477422C06B8BC1ADD036D5D /* Pods-BlurrrDatingApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlurrrDatingApp.release.xcconfig"; path = "Target Support Files/Pods-BlurrrDatingApp/Pods-BlurrrDatingApp.release.xcconfig"; sourceTree = "<group>"; };
+		BD33D066767E57EB7B9AA1FD /* Pods-BlurrrDatingApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlurrrDatingApp.debug.xcconfig"; path = "Target Support Files/Pods-BlurrrDatingApp/Pods-BlurrrDatingApp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -26,17 +30,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2EE0D8B0C28504EAE963FC57 /* Pods_BlurrrDatingApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		20D1DA5B570E856DCD99C254 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				68CB59C7E01B910E007A22B7 /* Pods_BlurrrDatingApp.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		529948922BDF30E400F9947E = {
 			isa = PBXGroup;
 			children = (
 				5299489D2BDF30E400F9947E /* BlurrrDatingApp */,
 				5299489C2BDF30E400F9947E /* Products */,
+				6A5206B700545DC2E4410FE9 /* Pods */,
+				20D1DA5B570E856DCD99C254 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -67,6 +82,15 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		6A5206B700545DC2E4410FE9 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				BD33D066767E57EB7B9AA1FD /* Pods-BlurrrDatingApp.debug.xcconfig */,
+				8477422C06B8BC1ADD036D5D /* Pods-BlurrrDatingApp.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -74,9 +98,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 529948A92BDF30E600F9947E /* Build configuration list for PBXNativeTarget "BlurrrDatingApp" */;
 			buildPhases = (
+				F233700692D5AA13D934658D /* [CP] Check Pods Manifest.lock */,
 				529948972BDF30E400F9947E /* Sources */,
 				529948982BDF30E400F9947E /* Frameworks */,
 				529948992BDF30E400F9947E /* Resources */,
+				406EC31A44B3ADA71A604A37 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -132,6 +158,48 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		406EC31A44B3ADA71A604A37 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-BlurrrDatingApp/Pods-BlurrrDatingApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-BlurrrDatingApp/Pods-BlurrrDatingApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-BlurrrDatingApp/Pods-BlurrrDatingApp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F233700692D5AA13D934658D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-BlurrrDatingApp-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		529948972BDF30E400F9947E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -182,7 +250,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -245,7 +313,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -266,12 +334,14 @@
 		};
 		529948AA2BDF30E600F9947E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BD33D066767E57EB7B9AA1FD /* Pods-BlurrrDatingApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"BlurrrDatingApp/Preview Content\"";
+				DEVELOPMENT_TEAM = RCFPNH9WHP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -294,12 +364,14 @@
 		};
 		529948AB2BDF30E600F9947E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8477422C06B8BC1ADD036D5D /* Pods-BlurrrDatingApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"BlurrrDatingApp/Preview Content\"";
+				DEVELOPMENT_TEAM = RCFPNH9WHP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
