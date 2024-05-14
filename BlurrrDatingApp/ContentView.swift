@@ -28,6 +28,9 @@ struct JitsiMeetViewWrapper: UIViewRepresentable {
     func makeUIView(context: Context) -> JitsiMeetView {
         let jitsiMeetView = JitsiMeetView()
         jitsiMeetView.delegate = delegate
+        jitsiMeetView.join(JitsiMeetConferenceOptions.fromBuilder { (builder) in
+            builder.room = roomName
+        })
         return jitsiMeetView
     }
     
@@ -37,14 +40,36 @@ struct JitsiMeetViewWrapper: UIViewRepresentable {
 }
 
 struct ContentView: View {
-    let roomName = "your-hardcoded-room-name"
-
+    @State private var roomName: String? = nil
+    
     var body: some View {
         VStack {
-            JitsiMeetViewWrapper(roomName: roomName)
-                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-                .ignoresSafeArea()
+            if let roomName = roomName {
+                JitsiMeetViewWrapper(roomName: roomName)
+                    .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+                    .ignoresSafeArea()
+            } else {
+                Text("Connecting...")
+                    .onAppear {
+                        fetchRoomName()
+                    }
+            }
         }
+    }
+    
+    func fetchRoomName() {
+        guard let url = URL(string: "http://yourserver.com/get_room") else { return }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let data = data {
+                if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: String],
+                   let roomName = json["room_name"] {
+                    DispatchQueue.main.async {
+                        self.roomName = roomName
+                    }
+                }
+            }
+        }.resume()
     }
 }
 
@@ -53,3 +78,14 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+//import SwiftUI
+//struct ContentView : View {
+//    var body: some View {
+//        Text("HelloWorld")
+//    }
+//}
+//struct ContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ContentView()
+//    }
+//}
