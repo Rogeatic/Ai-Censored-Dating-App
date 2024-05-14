@@ -58,11 +58,11 @@ struct ContentView: View {
                 } else {
                     VStack {
                         CameraPreviewView()
-                            .frame(height: 300)
+                            .frame(height: 450)
                             .cornerRadius(12)
                             .padding()
 
-                        Text("Welcome to the App")
+                        Text("Welcome to The Blurrr")
                             .font(.largeTitle)
                             .padding()
 
@@ -72,8 +72,10 @@ struct ContentView: View {
                             Text("Start Video Call")
                                 .font(.title2)
                                 .padding()
-                                .background(Color.blue)
-                                .foregroundColor(.white)
+                                //.background(Color.blue)
+                                //.foregroundColor(.white)
+                                .background(.blueButton)
+                                .foregroundColor(.blueButtonText)
                                 .cornerRadius(10)
                         }
                     }
