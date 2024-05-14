@@ -42,50 +42,27 @@ struct JitsiMeetViewWrapper: UIViewRepresentable {
 struct ContentView: View {
     @State private var roomName: String? = nil
     @State private var isConnecting: Bool = false
-
+    @State private var connected: Bool = false
+    
     var body: some View {
         VStack {
             if let roomName = roomName {
-                JitsiMeetViewWrapper(roomName: roomName)
-                    .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-                    .ignoresSafeArea()
-            } else {
-                if isConnecting {
-                    Text("Connecting...")
-                        .onAppear {
-                            fetchRoomName()
-                        }
-                } else {
-                    VStack {
-                        CameraPreviewView()
-                            .frame(height: 450)
-                            .cornerRadius(12)
-                            .padding()
-
-                        Text("Welcome to The Blurrr")
-                            .font(.largeTitle)
-                            .padding()
-
-                        Button(action: {
-                            isConnecting = true
-                        }) {
-                            Text("Start Video Call")
-                                .font(.title2)
-                                .padding()
-                                //.background(Color.blue)
-                                //.foregroundColor(.white)
-                                .background(.blueButton)
-                                .foregroundColor(.blueButtonText)
-                                .cornerRadius(10)
-                        }
+                CallView(roomName: roomName)
+            } else if isConnecting {
+                ConnectingView()
+                    .onAppear {
+                        fetchRoomName()
                     }
+            } else {
+                StartingView {
+                    isConnecting = true
                 }
             }
         }
     }
     
     func fetchRoomName() {
-        guard let url = URL(string: "http://yourserver.com/get_room") else { return }
+        guard let url = URL(string: "https://yourserver.com/get_room") else { return }
         
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let data = data {
@@ -93,7 +70,16 @@ struct ContentView: View {
                    let roomName = json["room_name"] {
                     DispatchQueue.main.async {
                         self.roomName = roomName
+                        self.connected = true
                     }
+                } else {
+                    DispatchQueue.main.async {
+                        self.isConnecting = false
+                    }
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.isConnecting = false
                 }
             }
         }.resume()
