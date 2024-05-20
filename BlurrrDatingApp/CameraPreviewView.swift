@@ -4,17 +4,15 @@ import AVFoundation
 struct CameraPreviewView: UIViewRepresentable {
     class CameraPreviewLayer: UIView {
         var captureSession: AVCaptureSession
+        var previewLayer: AVCaptureVideoPreviewLayer
         
         init(session: AVCaptureSession) {
             self.captureSession = session
+            self.previewLayer = AVCaptureVideoPreviewLayer(session: session)
             super.init(frame: .zero)
             
-            let previewLayer = AVCaptureVideoPreviewLayer(session: session)
             previewLayer.videoGravity = .resizeAspectFill
             layer.addSublayer(previewLayer)
-            
-            previewLayer.frame = self.bounds
-            previewLayer.connection?.videoOrientation = .portrait
         }
         
         required init?(coder: NSCoder) {
@@ -23,9 +21,23 @@ struct CameraPreviewView: UIViewRepresentable {
         
         override func layoutSubviews() {
             super.layoutSubviews()
-            if let sublayers = layer.sublayers {
-                for layer in sublayers {
-                    layer.frame = self.bounds
+            previewLayer.frame = self.bounds
+            updateVideoOrientation()
+        }
+        
+        func updateVideoOrientation() {
+            if let connection = previewLayer.connection {
+                switch UIDevice.current.orientation {
+                case .portrait:
+                    connection.videoOrientation = .portrait
+                case .landscapeLeft:
+                    connection.videoOrientation = .landscapeRight
+                case .landscapeRight:
+                    connection.videoOrientation = .landscapeLeft
+                case .portraitUpsideDown:
+                    connection.videoOrientation = .portraitUpsideDown
+                default:
+                    connection.videoOrientation = .portrait
                 }
             }
         }
@@ -54,7 +66,7 @@ struct CameraPreviewView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: CameraPreviewLayer, context: Context) {
-        // No update needed
+        uiView.updateVideoOrientation()
     }
     
     static func dismantleUIView(_ uiView: CameraPreviewLayer, coordinator: ()) {
