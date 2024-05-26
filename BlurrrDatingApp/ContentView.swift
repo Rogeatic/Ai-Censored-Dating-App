@@ -6,6 +6,9 @@ struct ContentView: View {
     @State private var socketStatus: String = "Connecting to socket..."
     @State private var roomDetails: String = "Waiting for room details..."
     let manager = SocketManager(socketURL: URL(string: "http://146.190.132.105:8000")!, config: [.log(true), .compress])
+    var socket: SocketIOClient {
+        return manager.defaultSocket
+    }
 
     var body: some View {
         VStack {
@@ -33,25 +36,11 @@ struct ContentView: View {
     }
 
     func connectToSocket() {
-        let socket = manager.defaultSocket
-
         socket.on(clientEvent: .connect) { data, ack in
             DispatchQueue.main.async {
                 socketStatus = "Connected to socket"
             }
             fetchConnectedClients()
-        }
-
-        socket.on(clientEvent: .error) { data, ack in
-            DispatchQueue.main.async {
-                socketStatus = "Socket error: \(data)"
-            }
-        }
-
-        socket.on(clientEvent: .disconnect) { data, ack in
-            DispatchQueue.main.async {
-                socketStatus = "Socket disconnected: \(data)"
-            }
         }
 
         socket.on("room_details") { data, ack in
@@ -65,6 +54,18 @@ struct ContentView: View {
                 DispatchQueue.main.async {
                     roomDetails = "Failed to get room details"
                 }
+            }
+        }
+
+        socket.on(clientEvent: .error) { data, ack in
+            DispatchQueue.main.async {
+                socketStatus = "Socket error: \(data)"
+            }
+        }
+
+        socket.on(clientEvent: .disconnect) { data, ack in
+            DispatchQueue.main.async {
+                socketStatus = "Socket disconnected: \(data)"
             }
         }
 
@@ -106,81 +107,3 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
-
-
-//import SwiftUI
-//import JitsiMeetSDK
-//import SocketIO
-//
-//struct ContentView: View {
-//    @State private var roomName: String? = nil
-//    @State private var password: String? = nil
-//    @State private var isConnecting: Bool = false
-//    @State private var connected: Bool = false
-//    @State private var socketConnected: Bool = false
-//    let manager = SocketManager(socketURL: URL(string: "http://146.190.132.105:8000")!, config: [.log(true), .compress, .connectParams(["EIO": "4"])])
-//
-//    var body: some View {
-//        VStack {
-//            if let roomName = roomName {
-//                JitsiMeetViewWrapper(roomName: roomName, password: password ?? "")
-//            } else if isConnecting {
-//                ConnectingView(isConnecting: $isConnecting, connected: $connected, socketConnected: $socketConnected)
-//                    .onAppear {
-//                        fetchRoomName()
-//                    }
-//            } else {
-//                StartingView {
-//                    isConnecting = true
-//                }
-//            }
-//        }
-//    }
-//
-//    func fetchRoomName() {
-//        let socket = manager.defaultSocket
-//
-//        socket.on(clientEvent: .connect) { data, ack in
-//            print("Socket connected")
-//            socketConnected = true
-//            socket.emit("join", ["username": "user"])
-//        }
-//
-//        socket.on("paired") { data, ack in
-//            print("Paired event received: \(data)")
-//            if let roomDetails = data[0] as? [String: Any],
-//               let room = roomDetails["room"] as? String,
-//               let password = roomDetails["password"] as? String {
-//                DispatchQueue.main.async {
-//                    self.roomName = room
-//                    self.password = password
-//                    self.connected = true
-//                    self.isConnecting = false
-//                }
-//            } else {
-//                print("Paired event did not have the expected data structure")
-//            }
-//        }
-//
-//        socket.on("waiting") { data, ack in
-//            print("Waiting for another user to join...")
-//        }
-//
-//        socket.on(clientEvent: .error) { data, ack in
-//            print("Socket error: \(data)")
-//        }
-//
-//        socket.on(clientEvent: .disconnect) { data, ack in
-//            print("Socket disconnected: \(data)")
-//            socketConnected = false
-//        }
-//
-//        socket.connect()
-//    }
-//}
-//
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: ContentView {
-//        ContentView()
-//    }
-//}
