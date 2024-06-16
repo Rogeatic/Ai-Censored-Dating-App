@@ -8,6 +8,10 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack {
+                CameraPreviewView()
+                    .frame(height: 200) // Adjust the height as needed
+                    .padding()
+
                 Text("ContentView Loaded")
                     .padding()
                 

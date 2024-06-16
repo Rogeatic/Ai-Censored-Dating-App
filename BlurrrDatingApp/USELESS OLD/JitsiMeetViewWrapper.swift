@@ -3,22 +3,16 @@ import JitsiMeetSDK
 
 class JitsiMeetDelegate: NSObject, JitsiMeetViewDelegate {
     func conferenceJoined(_ data: [AnyHashable : Any]!) {
-        if let data = data {
-            print("Conference joined with data: \(data)")
-        } else {
-            print("Conference joined with no data")
-        }
+        print("Conference joined with data: \(data ?? [:])")
     }
     
     func conferenceTerminated(_ data: [AnyHashable : Any]!) {
-        if let data = data {
-            print("Conference terminated with data: \(data)")
-        } else {
-            print("Conference terminated with no data")
-        }
+        print("Conference terminated with data: \(data ?? [:])")
     }
     
-    // Implement other delegate methods as needed
+    func conferenceWillJoin(_ data: [AnyHashable : Any]!) {
+        print("Conference will join with data: \(data ?? [:])")
+    }
 }
 
 struct JitsiMeetViewWrapper: UIViewRepresentable {
@@ -29,10 +23,11 @@ struct JitsiMeetViewWrapper: UIViewRepresentable {
     func makeUIView(context: Context) -> JitsiMeetView {
         let jitsiMeetView = JitsiMeetView()
         jitsiMeetView.delegate = delegate
-        jitsiMeetView.join(JitsiMeetConferenceOptions.fromBuilder { (builder) in
+        let options = JitsiMeetConferenceOptions.fromBuilder { (builder) in
             builder.room = roomName
             // Use setFeatureFlag to handle password if necessary, else handle on the server side
-        })
+        }
+        jitsiMeetView.join(options)
         return jitsiMeetView
     }
     
