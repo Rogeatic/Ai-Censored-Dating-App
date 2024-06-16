@@ -12,6 +12,16 @@
 		529948A12BDF30E400F9947E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529948A02BDF30E400F9947E /* ContentView.swift */; };
 		529948A32BDF30E600F9947E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 529948A22BDF30E600F9947E /* Assets.xcassets */; };
 		529948A62BDF30E600F9947E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 529948A52BDF30E600F9947E /* Preview Assets.xcassets */; };
+<<<<<<< Updated upstream
+=======
+		52B52FE42BF30E5F009BCBCF /* Startingview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B52FE32BF30E5F009BCBCF /* Startingview.swift */; };
+		52B52FE62BF30E97009BCBCF /* ConnectingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B52FE52BF30E97009BCBCF /* ConnectingView.swift */; };
+		52B52FE82BF30EC8009BCBCF /* CallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B52FE72BF30EC8009BCBCF /* CallView.swift */; };
+		52DFE91A2BF9699800C007FC /* JitsiMeetViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DFE9192BF9699800C007FC /* JitsiMeetViewWrapper.swift */; };
+		52FFC0382C167AA7008B9C2F /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 52FFC0372C167AA7008B9C2F /* WebRTC */; };
+		52FFC03A2C167AC2008B9C2F /* WebRTCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52FFC0392C167AC2008B9C2F /* WebRTCClient.swift */; };
+		52FFC03C2C167B0B008B9C2F /* WebSocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52FFC03B2C167B0B008B9C2F /* WebSocketManager.swift */; };
+>>>>>>> Stashed changes
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +30,15 @@
 		529948A02BDF30E400F9947E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		529948A22BDF30E600F9947E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		529948A52BDF30E600F9947E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+<<<<<<< Updated upstream
+=======
+		52B52FE32BF30E5F009BCBCF /* Startingview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Startingview.swift; sourceTree = "<group>"; };
+		52B52FE52BF30E97009BCBCF /* ConnectingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectingView.swift; sourceTree = "<group>"; };
+		52B52FE72BF30EC8009BCBCF /* CallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallView.swift; sourceTree = "<group>"; };
+		52DFE9192BF9699800C007FC /* JitsiMeetViewWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitsiMeetViewWrapper.swift; sourceTree = "<group>"; };
+		52FFC0392C167AC2008B9C2F /* WebRTCClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCClient.swift; sourceTree = "<group>"; };
+		52FFC03B2C167B0B008B9C2F /* WebSocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketManager.swift; sourceTree = "<group>"; };
+>>>>>>> Stashed changes
 		68CB59C7E01B910E007A22B7 /* Pods_BlurrrDatingApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BlurrrDatingApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8477422C06B8BC1ADD036D5D /* Pods-BlurrrDatingApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlurrrDatingApp.release.xcconfig"; path = "Target Support Files/Pods-BlurrrDatingApp/Pods-BlurrrDatingApp.release.xcconfig"; sourceTree = "<group>"; };
 		BD33D066767E57EB7B9AA1FD /* Pods-BlurrrDatingApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlurrrDatingApp.debug.xcconfig"; path = "Target Support Files/Pods-BlurrrDatingApp/Pods-BlurrrDatingApp.debug.xcconfig"; sourceTree = "<group>"; };
@@ -31,6 +50,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2EE0D8B0C28504EAE963FC57 /* Pods_BlurrrDatingApp.framework in Frameworks */,
+				52FFC0382C167AA7008B9C2F /* WebRTC in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -67,6 +87,8 @@
 			isa = PBXGroup;
 			children = (
 				5299489E2BDF30E400F9947E /* BlurrrDatingAppApp.swift */,
+				52FFC03B2C167B0B008B9C2F /* WebSocketManager.swift */,
+				52FFC0392C167AC2008B9C2F /* WebRTCClient.swift */,
 				529948A02BDF30E400F9947E /* ContentView.swift */,
 				529948A22BDF30E600F9947E /* Assets.xcassets */,
 				529948A42BDF30E600F9947E /* Preview Content */,
@@ -102,13 +124,19 @@
 				529948972BDF30E400F9947E /* Sources */,
 				529948982BDF30E400F9947E /* Frameworks */,
 				529948992BDF30E400F9947E /* Resources */,
-				406EC31A44B3ADA71A604A37 /* [CP] Embed Pods Frameworks */,
+				C8048C37C799AAB496FF9733 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = BlurrrDatingApp;
+<<<<<<< Updated upstream
+=======
+			packageProductDependencies = (
+				52FFC0372C167AA7008B9C2F /* WebRTC */,
+			);
+>>>>>>> Stashed changes
 			productName = BlurrrDatingApp;
 			productReference = 5299489B2BDF30E400F9947E /* BlurrrDatingApp.app */;
 			productType = "com.apple.product-type.application";
@@ -137,6 +165,12 @@
 				Base,
 			);
 			mainGroup = 529948922BDF30E400F9947E;
+<<<<<<< Updated upstream
+=======
+			packageReferences = (
+				52FFC0362C167AA7008B9C2F /* XCRemoteSwiftPackageReference "WebRTC" */,
+			);
+>>>>>>> Stashed changes
 			productRefGroup = 5299489C2BDF30E400F9947E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -159,7 +193,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		406EC31A44B3ADA71A604A37 /* [CP] Embed Pods Frameworks */ = {
+		C8048C37C799AAB496FF9733 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -205,7 +239,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+<<<<<<< Updated upstream
+=======
+				52B52FE82BF30EC8009BCBCF /* CallView.swift in Sources */,
+				52FFC03A2C167AC2008B9C2F /* WebRTCClient.swift in Sources */,
+				52DFE91A2BF9699800C007FC /* JitsiMeetViewWrapper.swift in Sources */,
+				52B52FE42BF30E5F009BCBCF /* Startingview.swift in Sources */,
+				524664722C1545C100B0358E /* SocketIOManager.swift in Sources */,
+				52B52FE62BF30E97009BCBCF /* ConnectingView.swift in Sources */,
+				528C24802C1543280012C163 /* VideoCallView.swift in Sources */,
+>>>>>>> Stashed changes
 				529948A12BDF30E400F9947E /* ContentView.swift in Sources */,
+				52FFC03C2C167B0B008B9C2F /* WebSocketManager.swift in Sources */,
 				5299489F2BDF30E400F9947E /* BlurrrDatingAppApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -414,6 +459,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		52FFC0362C167AA7008B9C2F /* XCRemoteSwiftPackageReference "WebRTC" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stasel/WebRTC";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 125.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		52FFC0372C167AA7008B9C2F /* WebRTC */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 52FFC0362C167AA7008B9C2F /* XCRemoteSwiftPackageReference "WebRTC" */;
+			productName = WebRTC;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 529948932BDF30E400F9947E /* Project object */;
 }

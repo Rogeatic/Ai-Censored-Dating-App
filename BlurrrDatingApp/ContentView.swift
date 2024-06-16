@@ -43,6 +43,7 @@ struct ContentView: View {
     @State private var roomName: String? = nil
     
     var body: some View {
+<<<<<<< Updated upstream
         VStack {
             if let roomName = roomName {
                 JitsiMeetViewWrapper(roomName: roomName)
@@ -53,6 +54,57 @@ struct ContentView: View {
                     .onAppear {
                         fetchRoomName()
                     }
+=======
+        NavigationView {
+            VStack {
+                Text("ContentView Loaded")
+                    .padding()
+
+                TextField("Enter your user ID", text: $userID, onEditingChanged: { isEditing in
+                    if !isEditing {
+                        UIApplication.shared.endEditing()
+                    }
+                })
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
+
+                Button(action: {
+                    print("Join Room button pressed with userID: \(userID)")
+                    socketManager.joinRoom(userID: userID) {
+                        print("Room joined with ID: \(socketManager.roomID) and Password: \(socketManager.roomPassword)")
+                        navigateToVideoCall = true
+                    }
+                }) {
+                    Text("Join Room")
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                .padding()
+
+                if !socketManager.roomID.isEmpty {
+                    Text("Room ID: \(socketManager.roomID)")
+                        .padding()
+                    Text("Room Password: \(socketManager.roomPassword)")
+                        .padding()
+                } else {
+                    Text("Waiting for room ID...")
+                        .padding()
+                }
+
+                NavigationLink(destination: VideoCallView(roomID: socketManager.roomID, roomPassword: socketManager.roomPassword), isActive: $navigateToVideoCall) {
+                    EmptyView()
+                }
+            }
+            .padding()
+            .onAppear {
+                print("ContentView appeared")
+            }
+            .background(Color.white)
+            .onTapGesture {
+                UIApplication.shared.endEditing()
+>>>>>>> Stashed changes
             }
         }
     }

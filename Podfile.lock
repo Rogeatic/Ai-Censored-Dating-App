@@ -1,4 +1,5 @@
 PODS:
+<<<<<<< Updated upstream
   - Giphy (2.2.4):
     - libwebp
   - JitsiMeetSDK (9.2.2):
@@ -35,5 +36,25 @@ SPEC CHECKSUMS:
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
 
 PODFILE CHECKSUM: 7892ea4b38ef64c3c6d2973249fcf61bff931b45
+=======
+  - Socket.IO-Client-Swift (16.1.0):
+    - Starscream (~> 4.0.6)
+  - Starscream (4.0.8)
+
+DEPENDENCIES:
+  - Socket.IO-Client-Swift
+  - Starscream
+
+SPEC REPOS:
+  trunk:
+    - Socket.IO-Client-Swift
+    - Starscream
+
+SPEC CHECKSUMS:
+  Socket.IO-Client-Swift: ee4b8f80a3db18dd7f32b266ddf273310609443c
+  Starscream: 19b5533ddb925208db698f0ac508a100b884a1b9
+
+PODFILE CHECKSUM: bd35ab4f3ba9cbbfd407ad325c1d9013822d22f9
+>>>>>>> Stashed changes
 
 COCOAPODS: 1.15.2

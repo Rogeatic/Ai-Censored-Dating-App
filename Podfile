@@ -6,6 +6,12 @@ target 'BlurrrDatingApp' do
   use_frameworks!
 
   # Pods for BlurrrDatingApp
+<<<<<<< Updated upstream
   pod 'JitsiMeetSDK'
+=======
+  #pod 'JitsiMeetSDK'
+  pod 'Socket.IO-Client-Swift'
+  pod 'Starscream'
+>>>>>>> Stashed changes
 
 end
