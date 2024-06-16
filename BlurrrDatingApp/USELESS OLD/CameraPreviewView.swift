@@ -1,18 +1,31 @@
 import SwiftUI
 import AVFoundation
+import CoreML
+import Vision
+import NSFWDetector
 
 struct CameraPreviewView: UIViewRepresentable {
-    class CameraPreviewLayer: UIView {
+    @Binding var isBlurred: Bool
+
+    class CameraPreviewLayer: UIView, AVCaptureVideoDataOutputSampleBufferDelegate {
         var captureSession: AVCaptureSession
         var previewLayer: AVCaptureVideoPreviewLayer
+        var nsfwDetector = NSFWDetector.shared
+        @Binding var isBlurred: Bool
         
-        init(session: AVCaptureSession) {
+        private var blurTimer: Timer?
+
+        init(session: AVCaptureSession, isBlurred: Binding<Bool>) {
             self.captureSession = session
             self.previewLayer = AVCaptureVideoPreviewLayer(session: session)
+            self._isBlurred = isBlurred
+            
             super.init(frame: .zero)
             
             previewLayer.videoGravity = .resizeAspectFill
             layer.addSublayer(previewLayer)
+            
+            setupVideoOutput()
         }
         
         required init?(coder: NSCoder) {
@@ -41,6 +54,57 @@ struct CameraPreviewView: UIViewRepresentable {
                 }
             }
         }
+        
+        func setupVideoOutput() {
+            let videoOutput = AVCaptureVideoDataOutput()
+            videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "videoQueue"))
+            captureSession.addOutput(videoOutput)
+        }
+        
+        func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+            guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+            
+            // Convert the pixel buffer to a UIImage
+            let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+            let context = CIContext()
+            guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return }
+            let uiImage = UIImage(cgImage: cgImage)
+            
+            // Check the image for NSFW content
+            nsfwDetector.check(image: uiImage, completion: { result in
+                switch result {
+                case let .success(nsfwConfidence: confidence):
+                    DispatchQueue.main.async {
+                        if confidence > 0.82 {
+                            self.applyCensoring()
+                            print("NSFW content detected with confidence: \(confidence)")
+                        } else {
+                            self.scheduleRemoveCensoring()
+                        }
+                    }
+                default:
+                    break
+                }
+            })
+        }
+        
+        func applyCensoring() {
+            print("Applying censoring...")
+            blurTimer?.invalidate()
+            isBlurred = true
+            blurTimer = nil
+        }
+        
+        func scheduleRemoveCensoring() {
+            if blurTimer == nil {
+                print("Scheduling removal of censoring...")
+                blurTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in
+                    print("Removing censoring...")
+                    self.isBlurred = false
+                    self.blurTimer = nil
+                }
+            }
+        }
     }
     
     func makeUIView(context: Context) -> CameraPreviewLayer {
@@ -48,7 +112,7 @@ struct CameraPreviewView: UIViewRepresentable {
         session.sessionPreset = .high
         
         guard let frontCamera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) else {
-            return CameraPreviewLayer(session: session)
+            return CameraPreviewLayer(session: session, isBlurred: $isBlurred)
         }
         
         do {
@@ -62,7 +126,7 @@ struct CameraPreviewView: UIViewRepresentable {
         
         session.startRunning()
         
-        return CameraPreviewLayer(session: session)
+        return CameraPreviewLayer(session: session, isBlurred: $isBlurred)
     }
     
     func updateUIView(_ uiView: CameraPreviewLayer, context: Context) {

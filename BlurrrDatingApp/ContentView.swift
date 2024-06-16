@@ -1,16 +1,21 @@
+
 import SwiftUI
 
 struct ContentView: View {
     @StateObject private var socketManager = SocketIOManager()
     @State private var userID: String = ""
     @State private var navigateToVideoCall: Bool = false
+    @State private var isBlurred: Bool = false
 
     var body: some View {
         NavigationView {
             VStack {
-                CameraPreviewView()
+                CameraPreviewView(isBlurred: $isBlurred)
                     .frame(height: 400) // Adjust the height as needed
+                    .cornerRadius(15) // Add this line to round the corners
                     .padding()
+                    .blur(radius: isBlurred ? 100 : 0) // Apply the blur effect
+                    .animation(.easeInOut, value: isBlurred)
 
                 Text("ContentView Loaded")
                     .padding()
