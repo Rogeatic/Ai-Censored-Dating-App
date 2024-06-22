@@ -3,6 +3,10 @@ import JitsiMeetSDK
 
 struct VideoCallView: UIViewControllerRepresentable {
     let roomID: String
+    let displayName: String
+    let email: String
+    let avatarURL: URL
+    let idToken: String
 
     func makeUIViewController(context: Context) -> UIViewController {
         let viewController = UIViewController()
@@ -13,7 +17,7 @@ struct VideoCallView: UIViewControllerRepresentable {
         stackView.alignment = .fill
         stackView.distribution = .fill
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         // Room ID Label
         let roomLabel = UILabel()
         roomLabel.text = "Room ID: \(roomID)"
@@ -26,13 +30,15 @@ struct VideoCallView: UIViewControllerRepresentable {
         jitsiMeetView.delegate = context.coordinator
         jitsiMeetView.join(JitsiMeetConferenceOptions.fromBuilder { (builder) in
             builder.room = roomID
+            builder.userInfo = JitsiMeetUserInfo(displayName: displayName, andEmail: email, andAvatar: avatarURL)
+            builder.token = idToken
         })
         jitsiMeetView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         stackView.addArrangedSubview(jitsiMeetView)
 
         // Add the stack view to the view controller's view
         viewController.view.addSubview(stackView)
-        
+
         // Set up the constraints for the stack view
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
@@ -73,6 +79,6 @@ struct VideoCallView: UIViewControllerRepresentable {
 
 struct VideoCallView_Previews: PreviewProvider {
     static var previews: some View {
-        VideoCallView(roomID: "testRoom")
+        VideoCallView(roomID: "testRoom", displayName: "Test User", email: "test@example.com", avatarURL: URL(string: "https://example.com/avatar.png")!, idToken: "testToken")
     }
 }

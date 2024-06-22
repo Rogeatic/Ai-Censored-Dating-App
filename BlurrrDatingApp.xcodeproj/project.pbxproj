@@ -11,6 +11,7 @@
 		524664722C1545C100B0358E /* SocketIOManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524664712C1545C100B0358E /* SocketIOManager.swift */; };
 		52734B402BF2FA270077EBFA /* CameraPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52734B3F2BF2FA270077EBFA /* CameraPreviewView.swift */; };
 		527D90262C1EAAE7001226F8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527D90252C1EAAE7001226F8 /* AppDelegate.swift */; };
+		52862EB72C268C6E009F441B /* GoogleSignInButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52862EB62C268C6E009F441B /* GoogleSignInButton.swift */; };
 		528C24802C1543280012C163 /* VideoCallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528C247F2C1543280012C163 /* VideoCallView.swift */; };
 		5299489F2BDF30E400F9947E /* BlurrrDatingAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5299489E2BDF30E400F9947E /* BlurrrDatingAppApp.swift */; };
 		529948A12BDF30E400F9947E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529948A02BDF30E400F9947E /* ContentView.swift */; };
@@ -27,6 +28,7 @@
 		524B0F4F2BF3250B00E1504A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		52734B3F2BF2FA270077EBFA /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreviewView.swift; sourceTree = "<group>"; };
 		527D90252C1EAAE7001226F8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		52862EB62C268C6E009F441B /* GoogleSignInButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInButton.swift; sourceTree = "<group>"; };
 		528C247F2C1543280012C163 /* VideoCallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCallView.swift; sourceTree = "<group>"; };
 		5299489B2BDF30E400F9947E /* BlurrrDatingApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlurrrDatingApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5299489E2BDF30E400F9947E /* BlurrrDatingAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlurrrDatingAppApp.swift; sourceTree = "<group>"; };
@@ -99,6 +101,7 @@
 				524B0F4F2BF3250B00E1504A /* Info.plist */,
 				5299489E2BDF30E400F9947E /* BlurrrDatingAppApp.swift */,
 				529948A02BDF30E400F9947E /* ContentView.swift */,
+				52862EB62C268C6E009F441B /* GoogleSignInButton.swift */,
 				527D90252C1EAAE7001226F8 /* AppDelegate.swift */,
 				528C247F2C1543280012C163 /* VideoCallView.swift */,
 				524664712C1545C100B0358E /* SocketIOManager.swift */,
@@ -243,6 +246,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52862EB72C268C6E009F441B /* GoogleSignInButton.swift in Sources */,
 				52B52FE82BF30EC8009BCBCF /* CallView.swift in Sources */,
 				52DFE91A2BF9699800C007FC /* JitsiMeetViewWrapper.swift in Sources */,
 				52B52FE42BF30E5F009BCBCF /* Startingview.swift in Sources */,
