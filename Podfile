@@ -8,6 +8,6 @@ target 'BlurrrDatingApp' do
   pod 'Socket.IO-Client-Swift'
   pod 'Starscream'
   pod 'NSFWDetector'
-
+  pod 'GoogleSignIn'
 
 end

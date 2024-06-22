@@ -1,6 +1,20 @@
 PODS:
+  - AppAuth (1.7.5):
+    - AppAuth/Core (= 1.7.5)
+    - AppAuth/ExternalUserAgent (= 1.7.5)
+  - AppAuth/Core (1.7.5)
+  - AppAuth/ExternalUserAgent (1.7.5):
+    - AppAuth/Core
   - Giphy (2.2.4):
     - libwebp
+  - GoogleSignIn (7.1.0):
+    - AppAuth (< 2.0, >= 1.7.3)
+    - GTMAppAuth (< 5.0, >= 4.1.1)
+    - GTMSessionFetcher/Core (~> 3.3)
+  - GTMAppAuth (4.1.1):
+    - AppAuth/Core (~> 1.7)
+    - GTMSessionFetcher/Core (< 4.0, >= 3.3)
+  - GTMSessionFetcher/Core (3.4.1)
   - JitsiMeetSDK (9.2.2):
     - Giphy (= 2.2.4)
     - JitsiWebRTC (~> 118.0)
@@ -23,6 +37,7 @@ PODS:
   - Starscream (4.0.8)
 
 DEPENDENCIES:
+  - GoogleSignIn
   - JitsiMeetSDK (= 9.2.2)
   - NSFWDetector
   - Socket.IO-Client-Swift
@@ -30,7 +45,11 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - AppAuth
     - Giphy
+    - GoogleSignIn
+    - GTMAppAuth
+    - GTMSessionFetcher
     - JitsiMeetSDK
     - JitsiWebRTC
     - libwebp
@@ -39,7 +58,11 @@ SPEC REPOS:
     - Starscream
 
 SPEC CHECKSUMS:
+  AppAuth: 501c04eda8a8d11f179dbe8637b7a91bb7e5d2fa
   Giphy: 6b5f6986c8df4f71e01a8ef86595f426b3439fb5
+  GoogleSignIn: d4281ab6cf21542b1cfaff85c191f230b399d2db
+  GTMAppAuth: f69bd07d68cd3b766125f7e072c45d7340dea0de
+  GTMSessionFetcher: 8000756fc1c19d2e5697b90311f7832d2e33f6cd
   JitsiMeetSDK: 20c6e5a09dafc3669d24cb7a1750cb0c51dc1180
   JitsiWebRTC: 3a41671ef65a51d7204323814b055a2690b921c7
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
@@ -47,6 +70,6 @@ SPEC CHECKSUMS:
   Socket.IO-Client-Swift: ee4b8f80a3db18dd7f32b266ddf273310609443c
   Starscream: 19b5533ddb925208db698f0ac508a100b884a1b9
 
-PODFILE CHECKSUM: 44d012ce72bf08dd2e71b11bc771b25e20395dfa
+PODFILE CHECKSUM: 3286c1aa21f8f41b3e2c9a04c75e4a2b1d06dc9f
 
 COCOAPODS: 1.15.2

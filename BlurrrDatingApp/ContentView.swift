@@ -10,11 +10,12 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack {
+                // This is the starting view.
                 CameraPreviewView(isBlurred: $isBlurred)
-                    .frame(height: 400) // Adjust the height as needed
-                    .cornerRadius(15) // Add this line to round the corners
+                    .frame(height: 400)
+                    .cornerRadius(15)
                     .padding()
-                    .blur(radius: isBlurred ? 100 : 0) // Apply the blur effect
+                    .blur(radius: isBlurred ? 100 : 0) // Apply the blur effect based on isBlurred
                     .animation(.easeInOut, value: isBlurred)
 
                 Text("ContentView Loaded")
@@ -49,7 +50,7 @@ struct ContentView: View {
                     Text("Waiting for room ID...")
                         .padding()
                 }
-
+                    
                 NavigationLink(destination: VideoCallView(roomID: socketManager.roomID), isActive: $navigateToVideoCall) {
                     EmptyView()
                 }
