@@ -1,4 +1,4 @@
-import SwiftUI
+import Foundation
 import SocketIO
 
 class SocketIOManager: ObservableObject {
@@ -15,10 +15,19 @@ class SocketIOManager: ObservableObject {
             print("Socket connected")
         }
 
+        socket.on("room_created") { data, ack in
+            if let response = data[0] as? [String: Any], let roomID = response["room_id"] as? String {
+                DispatchQueue.main.async {
+                    self.roomID = roomID
+                    NotificationCenter.default.post(name: .roomCreated, object: nil, userInfo: response)
+                }
+            }
+        }
+
         socket.connect()
     }
 
-    func joinRoom(userID: String, completion: @escaping () -> Void) {
+    func joinRoom(userID: String, completion: @escaping ([String: Any]) -> Void) {
         guard let url = URL(string: "http://146.190.132.105:8000/join") else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -37,11 +46,15 @@ class SocketIOManager: ObservableObject {
                     DispatchQueue.main.async {
                         if let roomID = responseJSON["room_id"] as? String {
                             self.roomID = roomID
-                            completion()
                         }
+                        completion(responseJSON)
                     }
                 }
             }
         }.resume()
     }
+}
+
+extension Notification.Name {
+    static let roomCreated = Notification.Name("roomCreated")
 }
