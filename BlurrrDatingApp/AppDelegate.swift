@@ -1,23 +1,17 @@
 import UIKit
-import JitsiMeetSDK
+import GoogleSignIn
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    var pipViewCoordinator: PiPViewCoordinator?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Initialize JitsiMeetView
-        let jitsiMeetView = JitsiMeetView()
-        self.pipViewCoordinator = PiPViewCoordinator(withView: jitsiMeetView)
+        // Initialize Google Sign-In
+        GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: "414114629933-jk8k57h27p80v8kvrofinkr0q6ppkiil.apps.googleusercontent.com")
         return true
     }
 
-    func applicationWillResignActive(_ application: UIApplication) {
-        pipViewCoordinator?.enterPictureInPicture()
-    }
-
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        pipViewCoordinator?.exitPictureInPicture()
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        return GIDSignIn.sharedInstance.handle(url)
     }
 }
