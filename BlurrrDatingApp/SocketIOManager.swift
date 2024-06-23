@@ -7,7 +7,7 @@ class SocketIOManager: ObservableObject {
     @Published var roomID: String = ""
 
     init() {
-        let socketURL = URL(string: "http://146.190.132.105:8000")! // Update server IP and port
+        let socketURL = URL(string: "http://146.190.132.105:8000")! // Update to your server URL
         manager = SocketManager(socketURL: socketURL, config: [.log(true), .compress])
         socket = manager.defaultSocket
 
@@ -15,11 +15,11 @@ class SocketIOManager: ObservableObject {
             print("Socket connected")
         }
 
-        socket.on("room_created") { data, ack in
+        socket.on("room_ready") { data, ack in
+            print("Received room_ready event")
             if let response = data[0] as? [String: Any], let roomID = response["room_id"] as? String {
                 DispatchQueue.main.async {
                     self.roomID = roomID
-                    NotificationCenter.default.post(name: .roomCreated, object: nil, userInfo: response)
                 }
             }
         }
@@ -27,7 +27,7 @@ class SocketIOManager: ObservableObject {
         socket.connect()
     }
 
-    func joinRoom(userID: String, completion: @escaping ([String: Any]) -> Void) {
+    func joinRoom(userID: String) {
         guard let url = URL(string: "http://146.190.132.105:8000/join") else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -46,15 +46,11 @@ class SocketIOManager: ObservableObject {
                     DispatchQueue.main.async {
                         if let roomID = responseJSON["room_id"] as? String {
                             self.roomID = roomID
+                            self.socket.emit("join", ["user_id": userID, "room_id": roomID])
                         }
-                        completion(responseJSON)
                     }
                 }
             }
         }.resume()
     }
-}
-
-extension Notification.Name {
-    static let roomCreated = Notification.Name("roomCreated")
 }

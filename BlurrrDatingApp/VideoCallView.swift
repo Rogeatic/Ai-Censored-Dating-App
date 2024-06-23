@@ -1,50 +1,25 @@
 import SwiftUI
-import JitsiMeetSDK
+import WebKit
 
 struct VideoCallView: UIViewControllerRepresentable {
     let roomID: String
-    let displayName: String
-    let email: String
-    let avatarURL: URL
-    let idToken: String
 
     func makeUIViewController(context: Context) -> UIViewController {
         let viewController = UIViewController()
+        let webView = WKWebView()
 
-        // Create a vertical stack to hold the room ID text and JitsiMeetView
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.alignment = .fill
-        stackView.distribution = .fill
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Room ID Label
-        let roomLabel = UILabel()
-        roomLabel.text = "Room ID: \(roomID)"
-        roomLabel.textAlignment = .center
-        roomLabel.font = UIFont.systemFont(ofSize: 24)
-        stackView.addArrangedSubview(roomLabel)
+        let jitsiMeetURL = URL(string: "https://meet.jit.si/\(roomID)")!
+        let request = URLRequest(url: jitsiMeetURL)
 
-        // JitsiMeetView
-        let jitsiMeetView = JitsiMeetView()
-        jitsiMeetView.delegate = context.coordinator
-        jitsiMeetView.join(JitsiMeetConferenceOptions.fromBuilder { (builder) in
-            builder.room = roomID
-            builder.userInfo = JitsiMeetUserInfo(displayName: displayName, andEmail: email, andAvatar: avatarURL)
-            builder.token = idToken
-        })
-        jitsiMeetView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        stackView.addArrangedSubview(jitsiMeetView)
+        webView.load(request)
+        viewController.view = webView
 
-        // Add the stack view to the view controller's view
-        viewController.view.addSubview(stackView)
-        
-        // Set up the constraints for the stack view
+        webView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
-            stackView.topAnchor.constraint(equalTo: viewController.view.topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
+            webView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
+            webView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
+            webView.topAnchor.constraint(equalTo: viewController.view.topAnchor),
+            webView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
         ])
 
         return viewController
@@ -52,33 +27,7 @@ struct VideoCallView: UIViewControllerRepresentable {
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
-
-    class Coordinator: NSObject, JitsiMeetViewDelegate {
-        var parent: VideoCallView
-
-        init(_ parent: VideoCallView) {
-            self.parent = parent
-        }
-
-        func conferenceTerminated(_ data: [AnyHashable : Any]!) {
-            print("Conference terminated: \(String(describing: data))")
-        }
-
-        func conferenceJoined(_ data: [AnyHashable : Any]!) {
-            print("Conference joined: \(String(describing: data))")
-        }
-
-        func conferenceWillJoin(_ data: [AnyHashable : Any]!) {
-            print("Conference will join: \(String(describing: data))")
-        }
-    }
-}
-
-struct VideoCallView_Previews: PreviewProvider {
     static var previews: some View {
-        VideoCallView(roomID: "testRoom", displayName: "Test User", email: "test@example.com", avatarURL: URL(string: "https://example.com/default-avatar.png")!, idToken: "testToken")
+        VideoCallView(roomID: "testRoom")
     }
 }
