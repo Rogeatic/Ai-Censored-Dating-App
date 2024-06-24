@@ -1,13 +1,14 @@
-import Foundation
+import SwiftUI
 import SocketIO
 
 class SocketIOManager: ObservableObject {
     private var manager: SocketManager
     private var socket: SocketIOClient
     @Published var roomID: String = ""
+    @Published var roomPassword: String = "" // Add this line
 
     init() {
-        let socketURL = URL(string: "http://146.190.132.105:8000")! // Update to your server URL
+        let socketURL = URL(string: "http://146.190.132.105:8000")! // Update server IP and port
         manager = SocketManager(socketURL: socketURL, config: [.log(true), .compress])
         socket = manager.defaultSocket
 
@@ -15,19 +16,10 @@ class SocketIOManager: ObservableObject {
             print("Socket connected")
         }
 
-        socket.on("room_ready") { data, ack in
-            print("Received room_ready event")
-            if let response = data[0] as? [String: Any], let roomID = response["room_id"] as? String {
-                DispatchQueue.main.async {
-                    self.roomID = roomID
-                }
-            }
-        }
-
         socket.connect()
     }
 
-    func joinRoom(userID: String) {
+    func joinRoom(userID: String, completion: @escaping () -> Void) {
         guard let url = URL(string: "http://146.190.132.105:8000/join") else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -44,9 +36,11 @@ class SocketIOManager: ObservableObject {
             if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
                 if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                     DispatchQueue.main.async {
-                        if let roomID = responseJSON["room_id"] as? String {
+                        if let roomID = responseJSON["room_id"] as? String,
+                           let roomPassword = responseJSON["room_password"] as? String {
                             self.roomID = roomID
-                            self.socket.emit("join", ["user_id": userID, "room_id": roomID])
+                            self.roomPassword = roomPassword // Store the password
+                            completion()
                         }
                     }
                 }

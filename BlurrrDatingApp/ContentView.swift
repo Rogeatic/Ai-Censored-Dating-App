@@ -1,16 +1,18 @@
 import SwiftUI
 import GoogleSignIn
+import UIKit
 
 struct ContentView: View {
     @StateObject private var socketManager = SocketIOManager()
-    @State private var userID: String = ""
     @State private var navigateToVideoCall: Bool = false
+    @State private var isBlurred: Bool = false
     @State private var isUserSignedIn: Bool = false
+
+    // State variables to hold user info
     @State private var displayName: String = ""
     @State private var email: String = ""
     @State private var avatarURL: URL = URL(string: "https://example.com/default-avatar.png")!
     @State private var idToken: String = ""
-    @State private var isBlurred: Bool = false
 
     var body: some View {
         if !isUserSignedIn {
@@ -25,31 +27,37 @@ struct ContentView: View {
                             self.isUserSignedIn = true
                         }
                     }
-                }
-                .onReceive(NotificationCenter.default.publisher(for: .signInCompleted)) { notification in
-                    if let userInfo = notification.userInfo {
-                        self.displayName = userInfo["displayName"] as? String ?? ""
-                        self.email = userInfo["email"] as? String ?? ""
-                        self.avatarURL = userInfo["avatarURL"] as? URL ?? URL(string: "https://example.com/default-avatar.png")!
-                        self.idToken = userInfo["idToken"] as? String ?? ""
-                        self.isUserSignedIn = true
+
+                    NotificationCenter.default.addObserver(forName: .signInCompleted, object: nil, queue: .main) { notification in
+                        if let userInfo = notification.userInfo {
+                            self.displayName = userInfo["displayName"] as? String ?? ""
+                            self.email = userInfo["email"] as? String ?? ""
+                            self.avatarURL = userInfo["avatarURL"] as? URL ?? URL(string: "https://example.com/default-avatar.png")!
+                            self.idToken = userInfo["idToken"] as? String ?? ""
+                            self.isUserSignedIn = true
+                        }
                     }
                 }
         } else {
             NavigationView {
                 VStack {
+                    // This is the starting view.
                     CameraPreviewView(isBlurred: $isBlurred)
                         .frame(height: 400)
                         .cornerRadius(15)
                         .padding()
-                        .blur(radius: isBlurred ? 100 : 0)
+                        .blur(radius: isBlurred ? 100 : 0) // Apply the blur effect based on isBlurred
                         .animation(.easeInOut, value: isBlurred)
 
                     Text("Hello, \(displayName)")
+                        .font(.title)
                         .padding()
 
                     Button(action: {
-                        socketManager.joinRoom(userID: idToken)
+                        print("Join Room button pressed")
+                        socketManager.joinRoom(userID: idToken) {
+                            navigateToVideoCall = true
+                        }
                     }) {
                         Text("Join Room")
                             .padding()
@@ -59,15 +67,12 @@ struct ContentView: View {
                     }
                     .padding()
 
-                    if !socketManager.roomID.isEmpty {
-                        Text("Room ID: \(socketManager.roomID)")
-                            .padding()
-                        NavigationLink(destination: VideoCallView(roomID: socketManager.roomID, displayName: displayName, email: email, avatarURL: avatarURL.absoluteString, idToken: idToken), isActive: $navigateToVideoCall) {
-                            EmptyView()
-                        }
-                    } else {
-                        Text("Waiting for room ID...")
-                            .padding()
+                    NavigationLink(
+                        destination: VideoCallView(roomID: socketManager.roomID, roomPassword: socketManager.roomPassword, displayName: displayName, email: email, avatarURL: avatarURL, idToken: idToken)
+                            .navigationBarHidden(true),
+                        isActive: $navigateToVideoCall
+                    ) {
+                        EmptyView()
                     }
                 }
                 .padding()
@@ -84,12 +89,12 @@ struct ContentView: View {
     }
 }
 
+extension Notification.Name {
+    static let signInCompleted = Notification.Name("signInCompleted")
+}
+
 extension UIApplication {
     func endEditing() {
         sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
-}
-
-extension Notification.Name {
-    static let signInCompleted = Notification.Name("signInCompleted")
 }
