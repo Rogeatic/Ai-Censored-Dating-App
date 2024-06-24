@@ -16,7 +16,7 @@
         <key>NSAllowsArbitraryLoads</key>
         <true/>
     </dict>
-    
+
     <!-- Google Sign-In configuration -->
     <key>CFBundleURLTypes</key>
     <array>

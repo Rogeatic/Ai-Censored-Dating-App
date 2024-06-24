@@ -3,11 +3,10 @@ import JitsiMeetSDK
 
 struct VideoCallView: UIViewControllerRepresentable {
     let roomID: String
-    let roomPassword: String
+    let roomPassword: String?
     let displayName: String
     let email: String
     let avatarURL: URL
-    let idToken: String
 
     func makeUIViewController(context: Context) -> UIViewController {
         let viewController = UIViewController()
@@ -32,10 +31,9 @@ struct VideoCallView: UIViewControllerRepresentable {
         jitsiMeetView.join(JitsiMeetConferenceOptions.fromBuilder { (builder) in
             builder.room = roomID
             builder.userInfo = JitsiMeetUserInfo(displayName: displayName, andEmail: email, andAvatar: avatarURL)
-            builder.token = idToken
-            
-            // Include password in configOverwrite
-            builder.setConfigOverride("password", withValue: roomPassword)
+            if let password = roomPassword {
+                builder.setConfigOverride("password", withValue: password)
+            }
         })
         jitsiMeetView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         stackView.addArrangedSubview(jitsiMeetView)
@@ -83,6 +81,12 @@ struct VideoCallView: UIViewControllerRepresentable {
 
 struct VideoCallView_Previews: PreviewProvider {
     static var previews: some View {
-        VideoCallView(roomID: "testRoom", roomPassword: "testPass", displayName: "Test User", email: "test@example.com", avatarURL: URL(string: "https://example.com/default-avatar.png")!, idToken: "testToken")
+        VideoCallView(
+            roomID: "testRoom",
+            roomPassword: nil,
+            displayName: "Test User",
+            email: "test@example.com",
+            avatarURL: URL(string: "https://example.com/default-avatar.png")!
+        )
     }
 }

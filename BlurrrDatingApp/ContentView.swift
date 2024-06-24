@@ -68,7 +68,7 @@ struct ContentView: View {
                     .padding()
 
                     NavigationLink(
-                        destination: VideoCallView(roomID: socketManager.roomID, roomPassword: socketManager.roomPassword, displayName: displayName, email: email, avatarURL: avatarURL, idToken: idToken)
+                        destination: VideoCallView(roomID: socketManager.roomID, roomPassword: socketManager.roomPassword, displayName: displayName, email: email, avatarURL: avatarURL)
                             .navigationBarHidden(true),
                         isActive: $navigateToVideoCall
                     ) {
