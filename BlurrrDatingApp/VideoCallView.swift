@@ -8,9 +8,30 @@ struct VideoCallView: UIViewControllerRepresentable {
     let avatarURL: String
     let idToken: String
 
+    class Coordinator: NSObject, WKNavigationDelegate {
+        var parent: VideoCallView
+
+        init(parent: VideoCallView) {
+            self.parent = parent
+        }
+
+        func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+            print("Failed to load URL: \(error.localizedDescription)")
+        }
+        
+        func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+            print("Failed to navigate: \(error.localizedDescription)")
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(parent: self)
+    }
+
     func makeUIViewController(context: Context) -> UIViewController {
         let viewController = UIViewController()
         let webView = WKWebView()
+        webView.navigationDelegate = context.coordinator
 
         let jitsiMeetURL = URL(string: "http://64.23.140.158/\(roomID)")!
         var request = URLRequest(url: jitsiMeetURL)

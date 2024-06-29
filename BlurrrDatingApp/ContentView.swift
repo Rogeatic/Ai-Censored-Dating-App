@@ -49,9 +49,9 @@ struct ContentView: View {
                         .padding()
 
                     Button(action: {
-                        socketManager.joinRoom(userID: idToken)
+                        socketManager.requestRoomID()
                     }) {
-                        Text("Join Room")
+                        Text("Request Room")
                             .padding()
                             .background(Color.blue)
                             .foregroundColor(.white)

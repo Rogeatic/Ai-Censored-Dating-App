@@ -7,7 +7,7 @@ class SocketIOManager: ObservableObject {
     @Published var roomID: String = ""
 
     init() {
-        let socketURL = URL(string: "http://146.190.132.105:8000")! // Update to your server URL
+        let socketURL = URL(string: "http://146.190.132.105:8000")! // Update to your socket server URL
         manager = SocketManager(socketURL: socketURL, config: [.log(true), .compress])
         socket = manager.defaultSocket
 
@@ -27,14 +27,11 @@ class SocketIOManager: ObservableObject {
         socket.connect()
     }
 
-    func joinRoom(userID: String) {
-        guard let url = URL(string: "http://146.190.132.105:8000/join") else { return }
+    func requestRoomID() {
+        // Request a new room ID from your Jitsi server
+        guard let url = URL(string: "http://64.23.140.158/requestRoomID") else { return } // Update with your Jitsi server endpoint
         var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        let parameters: [String: String] = ["user_id": userID]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
+        request.httpMethod = "GET"
 
         URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
@@ -46,7 +43,7 @@ class SocketIOManager: ObservableObject {
                     DispatchQueue.main.async {
                         if let roomID = responseJSON["room_id"] as? String {
                             self.roomID = roomID
-                            self.socket.emit("join", ["user_id": userID, "room_id": roomID])
+                            self.socket.emit("join", ["room_id": roomID])
                         }
                     }
                 }
