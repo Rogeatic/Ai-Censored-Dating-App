@@ -1,50 +1,67 @@
-import SwiftUI
+import Foundation
 import SocketIO
 
 class SocketIOManager: ObservableObject {
-    private var manager: SocketManager
-    private var socket: SocketIOClient
+    static let shared = SocketIOManager()
+    
+    private let manager = SocketManager(socketURL: URL(string: "http://146.190.132.105:8000")!, config: [.log(true), .compress])
+    private(set) var socket: SocketIOClient!
+    
     @Published var roomID: String = ""
-    @Published var roomPassword: String = "" // Add this line
-
+    @Published var roomToken: String = ""
+    
     init() {
-        let socketURL = URL(string: "http://146.190.132.105:8000")! // Update server IP and port
-        manager = SocketManager(socketURL: socketURL, config: [.log(true), .compress])
         socket = manager.defaultSocket
-
-        socket.on(clientEvent: .connect) { data, ack in
+        
+        socket.on(clientEvent: .connect) {data, ack in
             print("Socket connected")
         }
-
+        
+        socket.on(clientEvent: .disconnect) {data, ack in
+            print("Socket disconnected")
+        }
+        
+        socket.on("room_ready") { [weak self] data, ack in
+            guard let self = self else { return }
+            if let roomData = data[0] as? [String: Any] {
+                self.roomID = roomData["room_id"] as? String ?? ""
+                self.roomToken = roomData["room_token"] as? String ?? ""
+            }
+        }
+    }
+    
+    func establishConnection() {
         socket.connect()
     }
-
-    func joinRoom(userID: String, completion: @escaping () -> Void) {
-        guard let url = URL(string: "http://146.190.132.105:8000/join") else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        let parameters: [String: String] = ["user_id": userID]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
-
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data, error == nil else {
-                print("Error: \(error?.localizedDescription ?? "No data")")
-                return
+    
+    func closeConnection() {
+        socket.disconnect()
+    }
+    
+    func joinRoom(completion: @escaping () -> Void) {
+        let userID = UUID().uuidString // Replace with actual user ID if available
+        let joinData: [String: Any] = ["user_id": userID]
+        
+        socket.emit("join", joinData)
+        socket.on("room_ready") { [weak self] data, ack in
+            guard let self = self else { return }
+            if let roomData = data[0] as? [String: Any] {
+                self.roomID = roomData["room_id"] as? String ?? ""
+                self.roomToken = roomData["room_token"] as? String ?? ""
+                completion()
             }
-            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-                if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                    DispatchQueue.main.async {
-                        if let roomID = responseJSON["room_id"] as? String,
-                           let roomPassword = responseJSON["room_password"] as? String {
-                            self.roomID = roomID
-                            self.roomPassword = roomPassword // Store the password
-                            completion()
-                        }
-                    }
-                }
-            }
-        }.resume()
+        }
+    }
+    
+    func sendOffer(offer: [String: Any]) {
+        socket.emit("offer", offer)
+    }
+    
+    func sendAnswer(answer: [String: Any]) {
+        socket.emit("answer", answer)
+    }
+    
+    func sendIceCandidate(candidate: [String: Any]) {
+        socket.emit("ice-candidate", candidate)
     }
 }

@@ -1,92 +1,62 @@
 import SwiftUI
-import JitsiMeetSDK
+import WebRTC
 
-struct VideoCallView: UIViewControllerRepresentable {
-    let roomID: String
-    let roomPassword: String?
-    let displayName: String
-    let email: String
-    let avatarURL: URL
+struct VideoCallView: View {
+    @StateObject private var webrtcManager = WebRTCManager()
+    var roomID: String
+    var roomToken: String
 
-    func makeUIViewController(context: Context) -> UIViewController {
-        let viewController = UIViewController()
+    var body: some View {
+        VStack {
+            RTCVideoView(webrtcManager: webrtcManager)
+                .frame(width: 300, height: 400)
+                .background(Color.black)
+                .cornerRadius(10)
+                .padding()
 
-        // Create a vertical stack to hold the room ID text and JitsiMeetView
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.alignment = .fill
-        stackView.distribution = .fill
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Room ID Label
-        let roomLabel = UILabel()
-        roomLabel.text = "Room ID: \(roomID)"
-        roomLabel.textAlignment = .center
-        roomLabel.font = UIFont.systemFont(ofSize: 24)
-        stackView.addArrangedSubview(roomLabel)
-
-        // JitsiMeetView
-        let jitsiMeetView = JitsiMeetView()
-        jitsiMeetView.delegate = context.coordinator
-        jitsiMeetView.join(JitsiMeetConferenceOptions.fromBuilder { (builder) in
-            builder.room = roomID
-            builder.userInfo = JitsiMeetUserInfo(displayName: displayName, andEmail: email, andAvatar: avatarURL)
-            if let password = roomPassword {
-                builder.setConfigOverride("password", withValue: password)
+            Button(action: {
+                webrtcManager.createOffer()
+            }) {
+                Text("Start Call")
+                    .padding()
+                    .background(Color.green)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
             }
-        })
-        jitsiMeetView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        stackView.addArrangedSubview(jitsiMeetView)
+            .padding()
 
-        // Add the stack view to the view controller's view
-        viewController.view.addSubview(stackView)
-        
-        // Set up the constraints for the stack view
-        NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
-            stackView.topAnchor.constraint(equalTo: viewController.view.topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
-        ])
-
-        return viewController
-    }
-
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
-
-    class Coordinator: NSObject, JitsiMeetViewDelegate {
-        var parent: VideoCallView
-
-        init(_ parent: VideoCallView) {
-            self.parent = parent
+            Button(action: {
+                webrtcManager.endCall()
+                webrtcManager.setupPeerConnection() // This should work if these methods are correctly defined in WebRTCManager
+            }) {
+                Text("End Call")
+                    .padding()
+                    .background(Color.red)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+            .padding()
         }
-
-        func conferenceTerminated(_ data: [AnyHashable : Any]!) {
-            print("Conference terminated: \(String(describing: data))")
+        .onAppear {
+            webrtcManager.setupPeerConnection()
+            webrtcManager.joinRoom(roomID: roomID, roomToken: roomToken)
         }
-
-        func conferenceJoined(_ data: [AnyHashable : Any]!) {
-            print("Conference joined: \(String(describing: data))")
-        }
-
-        func conferenceWillJoin(_ data: [AnyHashable : Any]!) {
-            print("Conference will join: \(String(describing: data))")
-        }
+        .navigationBarHidden(true)
     }
 }
 
-struct VideoCallView_Previews: PreviewProvider {
-    static var previews: some View {
-        VideoCallView(
-            roomID: "testRoom",
-            roomPassword: nil,
-            displayName: "Test User",
-            email: "test@example.com",
-            avatarURL: URL(string: "https://example.com/default-avatar.png")!
-        )
+struct RTCVideoView: UIViewRepresentable {
+    @ObservedObject var webrtcManager: WebRTCManager
+
+    func makeUIView(context: Context) -> UIView {
+        #if arch(arm64)
+        // Use RTCMTLVideoView for 64-bit arm (arm64)
+        return webrtcManager.metalVideoView()
+        #else
+        // Use RTCEAGLVideoView for other architectures (like armv7)
+        return webrtcManager.eaglVideoView()
+        #endif
     }
+
+    func updateUIView(_ uiView: UIView, context: Context) {}
 }

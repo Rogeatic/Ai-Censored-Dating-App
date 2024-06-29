@@ -4,10 +4,13 @@ target 'BlurrrDatingApp' do
   use_frameworks!
 
   # Pods for BlurrrDatingApp
-  pod 'JitsiMeetSDK', '9.2.2'
+  #pod 'JitsiMeetSDK', '9.2.2'
   pod 'Socket.IO-Client-Swift'
   pod 'Starscream'
   pod 'NSFWDetector'
   pod 'GoogleSignIn'
+  pod 'WebRTC-lib'
+  #pod 'JitsiMeetSDK', '~> 4.0'
+  
 
 end
