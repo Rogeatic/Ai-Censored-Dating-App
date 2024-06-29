@@ -115,16 +115,20 @@ struct CameraPreviewView: UIViewRepresentable {
             return CameraPreviewLayer(session: session, isBlurred: $isBlurred)
         }
         
-        do {
-            let input = try AVCaptureDeviceInput(device: frontCamera)
-            if session.canAddInput(input) {
-                session.addInput(input)
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                let input = try AVCaptureDeviceInput(device: frontCamera)
+                if session.canAddInput(input) {
+                    session.addInput(input)
+                }
+                
+                DispatchQueue.main.async {
+                    session.startRunning()
+                }
+            } catch {
+                print("Error setting up camera input: \(error)")
             }
-        } catch {
-            print("Error setting up camera input: \(error)")
         }
-        
-        session.startRunning()
         
         return CameraPreviewLayer(session: session, isBlurred: $isBlurred)
     }

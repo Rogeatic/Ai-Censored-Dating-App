@@ -67,7 +67,6 @@
 		528C247E2C1543090012C163 /* USELESS OLD */ = {
 			isa = PBXGroup;
 			children = (
-				52734B3F2BF2FA270077EBFA /* CameraPreviewView.swift */,
 				52B52FE32BF30E5F009BCBCF /* Startingview.swift */,
 				52B52FE52BF30E97009BCBCF /* ConnectingView.swift */,
 				52B52FE72BF30EC8009BCBCF /* CallView.swift */,
@@ -99,6 +98,7 @@
 			children = (
 				528C247E2C1543090012C163 /* USELESS OLD */,
 				524B0F4F2BF3250B00E1504A /* Info.plist */,
+				52734B3F2BF2FA270077EBFA /* CameraPreviewView.swift */,
 				5299489E2BDF30E400F9947E /* BlurrrDatingAppApp.swift */,
 				529948A02BDF30E400F9947E /* ContentView.swift */,
 				52862EB62C268C6E009F441B /* GoogleSignInButton.swift */,

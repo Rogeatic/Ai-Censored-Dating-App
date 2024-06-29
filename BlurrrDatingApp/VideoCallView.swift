@@ -12,7 +12,7 @@ struct VideoCallView: UIViewControllerRepresentable {
         let viewController = UIViewController()
         let webView = WKWebView()
 
-        let jitsiMeetURL = URL(string: "https://meet.jit.si/\(roomID)")!
+        let jitsiMeetURL = URL(string: "http://64.23.140.158/\(roomID)")!
         var request = URLRequest(url: jitsiMeetURL)
         
         // Prepare user information to pass to Jitsi Meet

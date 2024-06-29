@@ -65,6 +65,9 @@ struct ContentView: View {
                         NavigationLink(destination: VideoCallView(roomID: socketManager.roomID, displayName: displayName, email: email, avatarURL: avatarURL.absoluteString, idToken: idToken), isActive: $navigateToVideoCall) {
                             EmptyView()
                         }
+                        .onAppear {
+                            self.navigateToVideoCall = true
+                        }
                     } else {
                         Text("Waiting for room ID...")
                             .padding()
