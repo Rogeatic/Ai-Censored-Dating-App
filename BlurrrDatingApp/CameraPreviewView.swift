@@ -122,9 +122,7 @@ struct CameraPreviewView: UIViewRepresentable {
                     session.addInput(input)
                 }
                 
-                DispatchQueue.main.async {
-                    session.startRunning()
-                }
+                session.startRunning()
             } catch {
                 print("Error setting up camera input: \(error)")
             }
