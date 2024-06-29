@@ -1,44 +1,58 @@
 import SwiftUI
-import WebKit
+import JitsiMeetSDK
 
 struct VideoCallView: UIViewControllerRepresentable {
     let roomID: String
+    let roomPassword: String?
     let displayName: String
     let email: String
-    let avatarURL: String
-    let idToken: String
+    let avatarURL: URL
 
     func makeUIViewController(context: Context) -> UIViewController {
         let viewController = UIViewController()
-        let webView = WKWebView()
 
-        let jitsiMeetURL = URL(string: "https://meet.jit.si/\(roomID)")!
-        var request = URLRequest(url: jitsiMeetURL)
-        
-        // Prepare user information to pass to Jitsi Meet
-        let userInfo = [
-            "displayName": displayName,
-            "email": email,
-            "avatarURL": avatarURL,
-            "idToken": idToken
-        ]
-        
-        // Convert userInfo to JSON string
-        if let userInfoData = try? JSONSerialization.data(withJSONObject: userInfo, options: []),
-           let userInfoString = String(data: userInfoData, encoding: .utf8) {
-            let userScript = WKUserScript(source: "window.jitsiMeetExternalAPI = window.jitsiMeetExternalAPI || {}; window.jitsiMeetExternalAPI.userInfo = \(userInfoString);", injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-            webView.configuration.userContentController.addUserScript(userScript)
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.distribution = .fill
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+
+        let roomLabel = UILabel()
+        roomLabel.text = "Room ID: \(roomID)"
+        roomLabel.textAlignment = .center
+        roomLabel.font = UIFont.systemFont(ofSize: 24)
+        stackView.addArrangedSubview(roomLabel)
+
+        let jitsiMeetView = JitsiMeetView()
+        jitsiMeetView.delegate = context.coordinator
+        let options = JitsiMeetConferenceOptions.fromBuilder { (builder) in
+            builder.room = roomID
+            builder.serverURL = URL(string: "https://64.23.140.158")!
+            builder.userInfo = JitsiMeetUserInfo(displayName: displayName, andEmail: email, andAvatar: avatarURL)
+            if let password = roomPassword {
+                builder.setConfigOverride("password", withValue: password)
+            }
+            builder.setFeatureFlag("p2p.enabled", withBoolean: true)
+            builder.setFeatureFlag("meeting-password-enabled", withBoolean: false)
+            builder.setFeatureFlag("invite.enabled", withBoolean: false)
+            builder.setFeatureFlag("live-streaming.enabled", withBoolean: false)
+            builder.setFeatureFlag("recording.enabled", withBoolean: false)
+            builder.setFeatureFlag("toolbox.enabled", withBoolean: false)
+            builder.setFeatureFlag("kick-out.enabled", withBoolean: false)
+            builder.setFeatureFlag("help.enabled", withBoolean: false)
+            builder.setFeatureFlag("close-captions.enabled", withBoolean: false)
         }
+        jitsiMeetView.join(options)
+        jitsiMeetView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        stackView.addArrangedSubview(jitsiMeetView)
 
-        webView.load(request)
-        viewController.view = webView
+        viewController.view.addSubview(stackView)
 
-        webView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            webView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
-            webView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
-            webView.topAnchor.constraint(equalTo: viewController.view.topAnchor),
-            webView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
+            stackView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
+            stackView.topAnchor.constraint(equalTo: viewController.view.topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
         ])
 
         return viewController
@@ -46,7 +60,27 @@ struct VideoCallView: UIViewControllerRepresentable {
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 
-    static var previews: some View {
-        VideoCallView(roomID: "testRoom", displayName: "Test User", email: "test@example.com", avatarURL: "https://example.com/avatar.png", idToken: "testToken")
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    class Coordinator: NSObject, JitsiMeetViewDelegate {
+        var parent: VideoCallView
+
+        init(_ parent: VideoCallView) {
+            self.parent = parent
+        }
+
+        func conferenceTerminated(_ data: [AnyHashable : Any]!) {
+            print("Conference terminated: \(String(describing: data))")
+        }
+
+        func conferenceJoined(_ data: [AnyHashable : Any]!) {
+            print("Conference joined: \(String(describing: data))")
+        }
+
+        func conferenceWillJoin(_ data: [AnyHashable : Any]!) {
+            print("Conference will join: \(String(describing: data))")
+        }
     }
 }

@@ -44,10 +44,11 @@ struct LoginView: View {
                 "displayName": user.profile?.name ?? "",
                 "email": user.profile?.email ?? "",
                 "avatarURL": user.profile?.imageURL(withDimension: 100) ?? URL(string: "https://example.com/default-avatar.png")!,
-                "idToken": user.idToken?.tokenString ?? ""
+                "idToken": user.idToken?.tokenString ?? "",
+                "accessToken": user.accessToken ?? ""
             ]
 
-            NotificationCenter.default.post(name: .signInCompleted, object: nil, userInfo: userInfo)
+            //NotificationCenter.default.post(name: .signInCompleted, object: nil, userInfo: userInfo)
         }
     }
 }

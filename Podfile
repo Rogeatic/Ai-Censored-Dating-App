@@ -1,10 +1,11 @@
 platform :ios, '17.5'
 
 target 'BlurrrDatingApp' do
+  platform :ios, '17.5'
   use_frameworks!
 
   # Pods for BlurrrDatingApp
-  pod 'JitsiMeetSDK', '9.2.2'
+  pod 'JitsiMeetSDK', '~> 4.0'
   pod 'Socket.IO-Client-Swift'
   pod 'Starscream'
   pod 'NSFWDetector'
