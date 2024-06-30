@@ -7,8 +7,8 @@ class SocketIOManager: ObservableObject {
     @Published var roomID: String = ""
 
     init() {
-        let socketURL = URL(string: "http://146.190.132.105:8000")! // Update to your socket server URL
-        manager = SocketManager(socketURL: socketURL, config: [.log(true), .compress])
+        let socketURL = URL(string: "https://blurrr-dating.com")!
+        manager = SocketManager(socketURL: socketURL, config: [.log(true), .compress, .secure(true), .selfSigned(true)])
         socket = manager.defaultSocket
 
         socket.on(clientEvent: .connect) { data, ack in
@@ -28,10 +28,18 @@ class SocketIOManager: ObservableObject {
     }
 
     func requestRoomID() {
-        // Request a new room ID from your Jitsi server
-        guard let url = URL(string: "http://64.23.140.158/requestRoomID") else { return } // Update with your Jitsi server endpoint
+        guard let url = URL(string: "https://blurrr-dating.com/join") else { return }
         var request = URLRequest(url: url)
-        request.httpMethod = "GET"
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        let requestBody: [String: Any] = ["user_id": "testuser"]
+
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: requestBody, options: [])
+        } catch {
+            print("Error serializing JSON: \(error)")
+            return
+        }
 
         URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {

@@ -18,7 +18,7 @@ struct VideoCallView: UIViewControllerRepresentable {
         func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
             print("Failed to load URL: \(error.localizedDescription)")
         }
-        
+
         func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
             print("Failed to navigate: \(error.localizedDescription)")
         }
@@ -33,17 +33,17 @@ struct VideoCallView: UIViewControllerRepresentable {
         let webView = WKWebView()
         webView.navigationDelegate = context.coordinator
 
-        let jitsiMeetURL = URL(string: "http://64.23.140.158/\(roomID)")!
+        // Create the Jitsi Meet URL with configuration parameters
+        let jitsiMeetURL = URL(string: "https://blurrr-dating.com/\(roomID)?jwt=\(idToken)&config.prejoinPageEnabled=false&config.startWithAudioMuted=true&config.startWithVideoMuted=true")!
         var request = URLRequest(url: jitsiMeetURL)
-        
+
         // Prepare user information to pass to Jitsi Meet
         let userInfo = [
             "displayName": displayName,
             "email": email,
-            "avatarURL": avatarURL,
-            "idToken": idToken
+            "avatarURL": avatarURL
         ]
-        
+
         // Convert userInfo to JSON string
         if let userInfoData = try? JSONSerialization.data(withJSONObject: userInfo, options: []),
            let userInfoString = String(data: userInfoData, encoding: .utf8) {
