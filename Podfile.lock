@@ -32,16 +32,11 @@ PODS:
   - libwebp/webp (1.3.2):
     - libwebp/sharpyuv
   - NSFWDetector (1.1.2)
-  - Socket.IO-Client-Swift (16.1.0):
-    - Starscream (~> 4.0.6)
-  - Starscream (4.0.8)
 
 DEPENDENCIES:
   - GoogleSignIn
-  - JitsiMeetSDK (= 9.2.2)
+  - JitsiMeetSDK
   - NSFWDetector
-  - Socket.IO-Client-Swift
-  - Starscream
 
 SPEC REPOS:
   trunk:
@@ -54,8 +49,6 @@ SPEC REPOS:
     - JitsiWebRTC
     - libwebp
     - NSFWDetector
-    - Socket.IO-Client-Swift
-    - Starscream
 
 SPEC CHECKSUMS:
   AppAuth: 501c04eda8a8d11f179dbe8637b7a91bb7e5d2fa
@@ -67,9 +60,7 @@ SPEC CHECKSUMS:
   JitsiWebRTC: 3a41671ef65a51d7204323814b055a2690b921c7
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
   NSFWDetector: d6eca9759743b5e43778818078d53711576e929f
-  Socket.IO-Client-Swift: ee4b8f80a3db18dd7f32b266ddf273310609443c
-  Starscream: 19b5533ddb925208db698f0ac508a100b884a1b9
 
-PODFILE CHECKSUM: 3286c1aa21f8f41b3e2c9a04c75e4a2b1d06dc9f
+PODFILE CHECKSUM: 4fa1a870d407e10b855d65cc3125455aafbcbd6d
 
 COCOAPODS: 1.15.2
