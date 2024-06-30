@@ -18,7 +18,7 @@ struct VideoCallView: UIViewControllerRepresentable {
         func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
             print("Failed to load URL: \(error.localizedDescription)")
         }
-
+        
         func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
             print("Failed to navigate: \(error.localizedDescription)")
         }
@@ -33,17 +33,17 @@ struct VideoCallView: UIViewControllerRepresentable {
         let webView = WKWebView()
         webView.navigationDelegate = context.coordinator
 
-        // Create the Jitsi Meet URL with configuration parameters
-        let jitsiMeetURL = URL(string: "https://blurrr-dating.com/\(roomID)?jwt=\(idToken)&config.prejoinPageEnabled=false&config.startWithAudioMuted=true&config.startWithVideoMuted=true")!
+        let jitsiMeetURL = URL(string: "https://blurrr-dating.com/\(roomID)")!
         var request = URLRequest(url: jitsiMeetURL)
-
+        
         // Prepare user information to pass to Jitsi Meet
         let userInfo = [
             "displayName": displayName,
             "email": email,
-            "avatarURL": avatarURL
+            "avatarURL": avatarURL,
+            "idToken": idToken
         ]
-
+        
         // Convert userInfo to JSON string
         if let userInfoData = try? JSONSerialization.data(withJSONObject: userInfo, options: []),
            let userInfoString = String(data: userInfoData, encoding: .utf8) {
@@ -66,8 +66,4 @@ struct VideoCallView: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
-
-    static var previews: some View {
-        VideoCallView(roomID: "testRoom", displayName: "Test User", email: "test@example.com", avatarURL: "https://example.com/avatar.png", idToken: "testToken")
-    }
 }

@@ -2,15 +2,15 @@ import SwiftUI
 import GoogleSignIn
 
 struct ContentView: View {
-    @StateObject private var socketManager = SocketIOManager()
-    @State private var userID: String = ""
-    @State private var navigateToVideoCall: Bool = false
+    @State private var roomID: String?
     @State private var isUserSignedIn: Bool = false
     @State private var displayName: String = ""
     @State private var email: String = ""
     @State private var avatarURL: URL = URL(string: "https://example.com/default-avatar.png")!
     @State private var idToken: String = ""
     @State private var isBlurred: Bool = false
+    @State private var isLoading: Bool = false
+    @State private var navigateToVideoCall: Bool = false
 
     var body: some View {
         if !isUserSignedIn {
@@ -48,25 +48,34 @@ struct ContentView: View {
                     Text("Hello, \(displayName)")
                         .padding()
 
-                    Button(action: {
-                        socketManager.requestRoomID()
-                    }) {
-                        Text("Request Room")
+                    Button(action: requestRoomID) {
+                        Text(isLoading ? "Joining..." : "Request Room")
                             .padding()
-                            .background(Color.blue)
+                            .background(isLoading ? Color.gray : Color.blue)
                             .foregroundColor(.white)
                             .cornerRadius(8)
                     }
                     .padding()
+                    .disabled(isLoading)
 
-                    if !socketManager.roomID.isEmpty {
-                        Text("Room ID: \(socketManager.roomID)")
+                    if let roomID = roomID {
+                        Text("Room ID: \(roomID)")
                             .padding()
-                        NavigationLink(destination: VideoCallView(roomID: socketManager.roomID, displayName: displayName, email: email, avatarURL: avatarURL.absoluteString, idToken: idToken), isActive: $navigateToVideoCall) {
+                        NavigationLink(
+                            destination: VideoCallView(
+                                roomID: roomID,
+                                displayName: displayName,
+                                email: email,
+                                avatarURL: avatarURL.absoluteString,
+                                idToken: idToken
+                            ),
+                            isActive: $navigateToVideoCall
+                        ) {
                             EmptyView()
                         }
+                        .hidden()
                         .onAppear {
-                            self.navigateToVideoCall = true
+                            navigateToVideoCall = true
                         }
                     } else {
                         Text("Waiting for room ID...")
@@ -84,6 +93,38 @@ struct ContentView: View {
             }
             .navigationViewStyle(StackNavigationViewStyle())
         }
+    }
+
+    func requestRoomID() {
+        isLoading = true
+        guard let url = URL(string: "https://blurrr-dating.com/join") else { return }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        let body = ["user_id": email]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [])
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                self.isLoading = false
+            }
+            guard let data = data, error == nil else {
+                print("Error: \(error?.localizedDescription ?? "No data")")
+                return
+            }
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    DispatchQueue.main.async {
+                        if let roomID = responseJSON["room_id"] as? String {
+                            self.roomID = roomID
+                            self.navigateToVideoCall = true
+                        } else if let message = responseJSON["message"] as? String {
+                            print(message)
+                        }
+                    }
+                }
+            }
+        }.resume()
     }
 }
 

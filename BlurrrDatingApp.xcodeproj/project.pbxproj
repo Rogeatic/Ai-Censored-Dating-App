@@ -26,6 +26,7 @@
 /* Begin PBXFileReference section */
 		524664712C1545C100B0358E /* SocketIOManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketIOManager.swift; sourceTree = "<group>"; };
 		524B0F4F2BF3250B00E1504A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		5265C5AB2C311C0A00621C2A /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		52734B3F2BF2FA270077EBFA /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreviewView.swift; sourceTree = "<group>"; };
 		527D90252C1EAAE7001226F8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		52862EB62C268C6E009F441B /* GoogleSignInButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInButton.swift; sourceTree = "<group>"; };
@@ -107,6 +108,7 @@
 				524664712C1545C100B0358E /* SocketIOManager.swift */,
 				529948A22BDF30E600F9947E /* Assets.xcassets */,
 				529948A42BDF30E600F9947E /* Preview Content */,
+				5265C5AB2C311C0A00621C2A /* module.modulemap */,
 			);
 			path = BlurrrDatingApp;
 			sourceTree = "<group>";

@@ -77,7 +77,7 @@ struct CameraPreviewView: UIViewRepresentable {
                     DispatchQueue.main.async {
                         if confidence > 0.82 {
                             self.applyCensoring()
-                            print("NSFW content detected with confidence: \(confidence)")
+                            //print("NSFW content detected with confidence: \(confidence)")
                         } else {
                             self.scheduleRemoveCensoring()
                         }
@@ -89,7 +89,7 @@ struct CameraPreviewView: UIViewRepresentable {
         }
         
         func applyCensoring() {
-            print("Applying censoring...")
+            //print("Applying censoring...")
             blurTimer?.invalidate()
             isBlurred = true
             blurTimer = nil
@@ -97,9 +97,9 @@ struct CameraPreviewView: UIViewRepresentable {
         
         func scheduleRemoveCensoring() {
             if blurTimer == nil {
-                print("Scheduling removal of censoring...")
+                //print("Scheduling removal of censoring...")
                 blurTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in
-                    print("Removing censoring...")
+                    //print("Removing censoring...")
                     self.isBlurred = false
                     self.blurTimer = nil
                 }
