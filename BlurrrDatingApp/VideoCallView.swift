@@ -1,69 +1,45 @@
-import SwiftUI
-import WebKit
-
-struct VideoCallView: UIViewControllerRepresentable {
-    let roomID: String
-    let displayName: String
-    let email: String
-    let avatarURL: String
-    let idToken: String
-
-    class Coordinator: NSObject, WKNavigationDelegate {
-        var parent: VideoCallView
-
-        init(parent: VideoCallView) {
-            self.parent = parent
-        }
-
-        func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-            print("Failed to load URL: \(error.localizedDescription)")
-        }
-        
-        func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-            print("Failed to navigate: \(error.localizedDescription)")
-        }
-    }
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(parent: self)
-    }
-
-    func makeUIViewController(context: Context) -> UIViewController {
-        let viewController = UIViewController()
-        let webView = WKWebView()
-        webView.navigationDelegate = context.coordinator
-
-        let jitsiMeetURL = URL(string: "https://blurrr-dating.com/\(roomID)")!
-        var request = URLRequest(url: jitsiMeetURL)
-        
-        // Prepare user information to pass to Jitsi Meet
-        let userInfo = [
-            "displayName": displayName,
-            "email": email,
-            "avatarURL": avatarURL,
-            "idToken": idToken
-        ]
-        
-        // Convert userInfo to JSON string
-        if let userInfoData = try? JSONSerialization.data(withJSONObject: userInfo, options: []),
-           let userInfoString = String(data: userInfoData, encoding: .utf8) {
-            let userScript = WKUserScript(source: "window.jitsiMeetExternalAPI = window.jitsiMeetExternalAPI || {}; window.jitsiMeetExternalAPI.userInfo = \(userInfoString);", injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-            webView.configuration.userContentController.addUserScript(userScript)
-        }
-
-        webView.load(request)
-        viewController.view = webView
-
-        webView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            webView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
-            webView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
-            webView.topAnchor.constraint(equalTo: viewController.view.topAnchor),
-            webView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
-        ])
-
-        return viewController
-    }
-
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
-}
+//import SwiftUI
+//import JitsiMeetSDK
+//
+//struct VideoCallView: UIViewControllerRepresentable {
+//    let roomID: String
+//
+//    func makeUIViewController(context: Context) -> UIViewController {
+//        let viewController = UIViewController()
+//        let jitsiMeetView = JitsiMeetView()
+//
+//        // Configure JitsiMeetView
+//        let options = JitsiMeetConferenceOptions.fromBuilder { builder in
+//            builder.room = roomID
+//            builder.serverURL = URL(string: "https://blurrr-dating.com") // Set your server URL
+//            builder.setFeatureFlag("welcomepage.enabled", withBoolean: false) // Disable the welcome page
+//            builder.setFeatureFlag("add-people.enabled", withBoolean: false) // Disable invite option
+//            builder.setFeatureFlag("calendar.enabled", withBoolean: false) // Disable calendar option
+//            builder.setFeatureFlag("call-integration.enabled", withBoolean: false) // Disable call integration
+//            builder.setFeatureFlag("chat.enabled", withBoolean: false) // Disable chat
+//            builder.setFeatureFlag("close-captions.enabled", withBoolean: false) // Disable close captions
+//            builder.setFeatureFlag("live-streaming.enabled", withBoolean: false) // Disable live streaming
+//            builder.setFeatureFlag("meeting-name.enabled", withBoolean: false) // Disable meeting name
+//            builder.setFeatureFlag("meeting-password.enabled", withBoolean: false) // Disable meeting password
+//            builder.setFeatureFlag("recording.enabled", withBoolean: false) // Disable recording
+//            builder.setFeatureFlag("video-share.enabled", withBoolean: false) // Disable video share
+//            builder.setFeatureFlag("pip.enabled", withBoolean: false) // Disable picture-in-picture
+//            builder.setFeatureFlag("raise-hand.enabled", withBoolean: false) // Disable raise hand
+//            builder.setFeatureFlag("tile-view.enabled", withBoolean: false) // Disable tile view
+//            builder.userInfo = JitsiMeetUserInfo(displayName: "User", andEmail: "user@example.com", andAvatar: URL(string: "https://example.com/default-avatar.png"))
+//        }
+//
+//        jitsiMeetView.join(options)
+//        viewController.view = jitsiMeetView
+//
+//        return viewController
+//    }
+//
+//    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+//
+//    static func dismantleUIViewController(_ uiViewController: UIViewController, coordinator: ()) {
+//        if let jitsiMeetView = uiViewController.view as? JitsiMeetView {
+//            jitsiMeetView.leave()
+//        }
+//    }
+//}
