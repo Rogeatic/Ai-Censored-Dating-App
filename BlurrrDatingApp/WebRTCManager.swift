@@ -16,6 +16,9 @@ class WebRTCManager: NSObject, ObservableObject {
         super.init()
         peerConnectionFactory = RTCPeerConnectionFactory()
         setupViews()
+        pollForOffer()
+        pollForAnswer()
+        pollForCandidates()
     }
     
     func setupViews() {
@@ -35,8 +38,6 @@ class WebRTCManager: NSObject, ObservableObject {
         
         setupLocalStream()
         createOffer()
-        pollForAnswer()
-        pollForCandidates()
     }
     
     func setupLocalStream() {
@@ -46,10 +47,7 @@ class WebRTCManager: NSObject, ObservableObject {
         videoCapture = RTCCameraVideoCapturer(delegate: videoSource)
         
         guard let camera = (RTCCameraVideoCapturer.captureDevices().first { $0.position == .front }),
-              let format = RTCCameraVideoCapturer.supportedFormats(for: camera).first else {
-            print("Error: Could not find camera or supported format")
-            return
-        }
+              let format = RTCCameraVideoCapturer.supportedFormats(for: camera).first else { return }
         
         let fps = format.videoSupportedFrameRateRanges.first?.maxFrameRate ?? 30
         videoCapture?.startCapture(with: camera, format: format, fps: Int(fps))
@@ -59,23 +57,18 @@ class WebRTCManager: NSObject, ObservableObject {
         
         peerConnection?.add(audioTrack, streamIds: ["stream0"])
         peerConnection?.add(localVideoTrack!, streamIds: ["stream0"])
-        
-        print("Local stream setup complete")
     }
     
     func createOffer() {
         let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
         peerConnection?.offer(for: constraints) { [weak self] (sdp, error) in
-            if let error = error {
-                print("Error creating offer: \(error.localizedDescription)")
-                return
-            }
             guard let sdp = sdp else { return }
             self?.peerConnection?.setLocalDescription(sdp, completionHandler: { (error) in
                 if let error = error {
-                    print("Error setting local description: \(error.localizedDescription)")
+                    print("Error setting local description for offer: \(error.localizedDescription)")
                     return
                 }
+                print("Offer created: \(sdp.sdp)")
                 self?.sendOffer(sdp)
             })
         }
@@ -84,16 +77,13 @@ class WebRTCManager: NSObject, ObservableObject {
     func createAnswer() {
         let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
         peerConnection?.answer(for: constraints) { [weak self] (sdp, error) in
-            if let error = error {
-                print("Error creating answer: \(error.localizedDescription)")
-                return
-            }
             guard let sdp = sdp else { return }
             self?.peerConnection?.setLocalDescription(sdp, completionHandler: { (error) in
                 if let error = error {
-                    print("Error setting local description: \(error.localizedDescription)")
+                    print("Error setting local description for answer: \(error.localizedDescription)")
                     return
                 }
+                print("Answer created: \(sdp.sdp)")
                 self?.sendAnswer(sdp)
             })
         }
@@ -105,6 +95,7 @@ class WebRTCManager: NSObject, ObservableObject {
                 print("Error setting remote description: \(error.localizedDescription)")
                 return
             }
+            print("Remote description set: \(sdp.sdp)")
             if sdp.type == .offer {
                 self.createAnswer()
             }
@@ -113,6 +104,7 @@ class WebRTCManager: NSObject, ObservableObject {
     
     func handleRemoteIceCandidate(_ candidate: RTCIceCandidate) {
         peerConnection?.add(candidate)
+        print("Remote ICE candidate added: \(candidate.sdp)")
     }
     
     func sendOffer(_ sdp: RTCSessionDescription) {
@@ -176,6 +168,9 @@ class WebRTCManager: NSObject, ObservableObject {
             }
             guard let data = data, let json = try? JSONSerialization.jsonObject(with: data, options: []), let dictionary = json as? [String: Any], let sdpString = dictionary["offer"] as? String else {
                 print("No offer found")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    self.pollForOffer() // Retry after delay
+                }
                 return
             }
             
@@ -194,6 +189,9 @@ class WebRTCManager: NSObject, ObservableObject {
             }
             guard let data = data, let json = try? JSONSerialization.jsonObject(with: data, options: []), let dictionary = json as? [String: Any], let sdpString = dictionary["answer"] as? String else {
                 print("No answer found")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    self.pollForAnswer() // Retry after delay
+                }
                 return
             }
             
@@ -214,17 +212,18 @@ class WebRTCManager: NSObject, ObservableObject {
                 print("Error polling for candidates: \(error.localizedDescription)")
                 return
             }
-            guard let data = data, let json = try? JSONSerialization.jsonObject(with: data, options: []), let dictionary = json as? [String: Any], let candidatesArray = dictionary["candidates"] as? [[String: Any]] else {
+            guard let data = data, let json = try? JSONSerialization.jsonObject(with: data, options: []), let dictionary = json as? [String: Any], let candidatesArray = dictionary["candidates"] as? [String] else {
                 print("No candidates found")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    self.pollForCandidates() // Retry after delay
+                }
                 return
             }
             
-            for candidateDict in candidatesArray {
-                if let candidateString = candidateDict["candidate"] as? String {
-                    let candidate = RTCIceCandidate(sdp: candidateString, sdpMLineIndex: 0, sdpMid: nil)
-                    self.peerConnection?.add(candidate)
-                    print("ICE candidate added: \(candidate)")
-                }
+            for candidateString in candidatesArray {
+                let candidate = RTCIceCandidate(sdp: candidateString, sdpMLineIndex: 0, sdpMid: nil)
+                self.peerConnection?.add(candidate)
+                print("ICE candidate added: \(candidate.sdp)")
             }
         }.resume()
     }
@@ -233,14 +232,16 @@ class WebRTCManager: NSObject, ObservableObject {
 extension WebRTCManager: RTCPeerConnectionDelegate {
     func peerConnectionShouldNegotiate(_ peerConnection: RTCPeerConnection) {
         print("Renegotiation needed")
+        // Handle renegotiation here if necessary
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didRemove candidates: [RTCIceCandidate]) {
         print("ICE candidates removed: \(candidates)")
+        // Handle the removal of ICE candidates if necessary
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange stateChanged: RTCSignalingState) {
-        print("Signaling state changed: \(stateChanged.rawValue)")
+        print("Signaling state changed: \(stateChanged)")
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didAdd stream: RTCMediaStream) {
@@ -259,7 +260,7 @@ extension WebRTCManager: RTCPeerConnectionDelegate {
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
-        print("ICE connection state changed: \(newState.rawValue)")
+        print("ICE connection state changed: \(newState)")
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {
@@ -268,7 +269,7 @@ extension WebRTCManager: RTCPeerConnectionDelegate {
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceGatheringState) {
-        print("ICE gathering state changed: \(newState.rawValue)")
+        print("ICE gathering state changed: \(newState)")
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didOpen dataChannel: RTCDataChannel) {
