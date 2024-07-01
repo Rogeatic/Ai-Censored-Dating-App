@@ -32,7 +32,7 @@ class WebRTCManager: NSObject, ObservableObject {
     func startConnection() {
         let configuration = RTCConfiguration()
         configuration.iceServers = [RTCIceServer(urlStrings: ["stun:stun.l.google.com:19302"])]
-        
+        print("contacting google stun server")
         let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
         peerConnection = peerConnectionFactory.peerConnection(with: configuration, constraints: constraints, delegate: self)
         
