@@ -38,6 +38,7 @@ class WebRTCManager: NSObject, ObservableObject {
     }
     
     func receiveWebSocketMessages() {
+        print("receive")
         webSocket?.receive { [weak self] result in
             switch result {
             case .failure(let error):
