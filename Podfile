@@ -4,11 +4,17 @@ target 'BlurrrDatingApp' do
   use_frameworks!
 
   # Pods for BlurrrDatingApp
+<<<<<<< Updated upstream
   pod 'JitsiMeetSDK'#, '9.2.2' # Specify the version you want to use
   #pod 'Socket.IO-Client-Swift'
   #pod 'Starscream'
   pod 'NSFWDetector'
   pod 'GoogleSignIn'
+=======
+  pod 'Starscream'
+  #pod 'GoogleWebRTC'
+
+>>>>>>> Stashed changes
 end
 
 post_install do |installer|

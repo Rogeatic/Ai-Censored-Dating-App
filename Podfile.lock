@@ -1,4 +1,5 @@
 PODS:
+<<<<<<< Updated upstream
   - AppAuth (1.7.5):
     - AppAuth/Core (= 1.7.5)
     - AppAuth/ExternalUserAgent (= 1.7.5)
@@ -62,5 +63,20 @@ SPEC CHECKSUMS:
   NSFWDetector: d6eca9759743b5e43778818078d53711576e929f
 
 PODFILE CHECKSUM: 4fa1a870d407e10b855d65cc3125455aafbcbd6d
+=======
+  - Starscream (4.0.8)
+
+DEPENDENCIES:
+  - Starscream
+
+SPEC REPOS:
+  trunk:
+    - Starscream
+
+SPEC CHECKSUMS:
+  Starscream: 19b5533ddb925208db698f0ac508a100b884a1b9
+
+PODFILE CHECKSUM: 92acbdd06d69a9178d01f6ba0394197b5e9750d1
+>>>>>>> Stashed changes
 
 COCOAPODS: 1.15.2

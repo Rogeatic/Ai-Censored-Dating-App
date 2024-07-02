@@ -1,4 +1,5 @@
 import SwiftUI
+<<<<<<< Updated upstream
 import GoogleSignIn
 
 struct ContentView: View {
@@ -92,7 +93,49 @@ struct ContentView: View {
                 }
             }
             .navigationViewStyle(StackNavigationViewStyle())
+=======
+
+struct ContentView: View {
+    var body: some View {
+        VStack {
+            Button("Join P2P Connection") {
+                joinP2PConnection()
+            }
+            .padding()
+            
+            Button("Offer P2P Connection") {
+                offerP2PConnection()
+            }
+            .padding()
+>>>>>>> Stashed changes
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    private func joinP2PConnection() {
+        // Implement joining P2P connection logic
+        // For simplicity, let's assume you're sending a WebSocket request
+        // to the server to check for an available connection.
+        let url = URL(string: "wss://blurrr-dating.com/ws")!
+        var request = URLRequest(url: url)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // Example of sending a message to the server
+        let message = "{\"action\": \"join_p2p_connection\"}"
+        WebSocketManager.shared.send(message: message)
+    }
+    
+    private func offerP2PConnection() {
+        // Implement offering P2P connection logic
+        // For simplicity, let's assume you're sending a WebSocket request
+        // to the server to offer an open connection.
+        let url = URL(string: "wss://blurrr-dating.com/ws")!
+        var request = URLRequest(url: url)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // Example of sending a message to the server
+        let message = "{\"action\": \"offer_p2p_connection\"}"
+        WebSocketManager.shared.send(message: message)
     }
 
     func requestRoomID() {
@@ -128,6 +171,7 @@ struct ContentView: View {
     }
 }
 
+<<<<<<< Updated upstream
 extension UIApplication {
     func endEditing() {
         sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
@@ -136,4 +180,10 @@ extension UIApplication {
 
 extension Notification.Name {
     static let signInCompleted = Notification.Name("signInCompleted")
+=======
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+>>>>>>> Stashed changes
 }

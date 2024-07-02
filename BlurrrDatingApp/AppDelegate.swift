@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 
 import UIKit
 import GoogleSignIn
@@ -16,3 +17,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return GIDSignIn.sharedInstance.handle(url)
     }
 }
+=======
+//import UIKit
+//import WebRTC
+//
+//class AppDelegate: UIResponder, UIApplicationDelegate {
+//    var window: UIWindow?
+//    var webRTCManager = WebRTCManager()
+//    
+//    func application(_ application: UIApplication,
+//                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+//        return true
+//    }
+//}
+>>>>>>> Stashed changes
