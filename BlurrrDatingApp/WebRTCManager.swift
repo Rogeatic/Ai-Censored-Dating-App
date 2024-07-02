@@ -1,5 +1,6 @@
 import WebRTC
 import Combine
+import Foundation
 
 class WebRTCManager: NSObject, ObservableObject {
     @Published var remoteVideoTrack: RTCVideoTrack?
@@ -9,16 +10,16 @@ class WebRTCManager: NSObject, ObservableObject {
     var localView: RTCMTLVideoView!
     var remoteView: RTCMTLVideoView!
     var videoCapture: RTCCameraVideoCapturer?
-
+    
     let sessionID = "a-static-uuid-string" // Replace with a static UUID
-
+    var webSocket: URLSessionWebSocketTask?
+    var isOfferer = false // Determine if this client should create the offer
+    
     override init() {
         super.init()
         peerConnectionFactory = RTCPeerConnectionFactory()
         setupViews()
-        pollForOffer()
-        pollForAnswer()
-        pollForCandidates()
+        setupWebSocket()
     }
     
     func setupViews() {
@@ -29,15 +30,72 @@ class WebRTCManager: NSObject, ObservableObject {
         remoteView.videoContentMode = .scaleAspectFill
     }
     
+    func setupWebSocket() {
+        let url = URL(string: "ws://blurrr-dating.com/socket")!
+        webSocket = URLSession.shared.webSocketTask(with: url)
+        webSocket?.resume()
+        receiveWebSocketMessages()
+    }
+    
+    func receiveWebSocketMessages() {
+        webSocket?.receive { [weak self] result in
+            switch result {
+            case .failure(let error):
+                print("WebSocket error: \(error.localizedDescription)")
+            case .success(let message):
+                switch message {
+                case .string(let text):
+                    self?.handleWebSocketMessage(text)
+                case .data(_):
+                    break
+                @unknown default:
+                    break
+                }
+            }
+            self?.receiveWebSocketMessages() // Listen for next message
+        }
+    }
+    
+    func handleWebSocketMessage(_ message: String) {
+        guard let data = message.data(using: .utf8),
+              let json = try? JSONSerialization.jsonObject(with: data, options: []),
+              let dictionary = json as? [String: Any] else {
+            return
+        }
+        
+        DispatchQueue.main.async {
+            if let offer = dictionary["offer"] as? String {
+                let sdp = RTCSessionDescription(type: .offer, sdp: offer)
+                self.handleRemoteDescription(sdp)
+            } else if let answer = dictionary["answer"] as? String {
+                let sdp = RTCSessionDescription(type: .answer, sdp: answer)
+                self.peerConnection?.setRemoteDescription(sdp, completionHandler: { error in
+                    if let error = error {
+                        print("Error setting remote description for answer: \(error.localizedDescription)")
+                    }
+                })
+            } else if let candidate = dictionary["candidate"] as? String {
+                let candidate = RTCIceCandidate(sdp: candidate, sdpMLineIndex: 0, sdpMid: nil)
+                self.peerConnection?.add(candidate)
+            } else if let role = dictionary["role"] as? String {
+                self.isOfferer = (role == "offerer")
+                self.startConnection()
+            }
+        }
+    }
+    
     func startConnection() {
         let configuration = RTCConfiguration()
         configuration.iceServers = [RTCIceServer(urlStrings: ["stun:stun.l.google.com:19302"])]
-        print("contacting google stun server")
+        print("Contacting Google STUN server")
         let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
         peerConnection = peerConnectionFactory.peerConnection(with: configuration, constraints: constraints, delegate: self)
         
         setupLocalStream()
-        createOffer()
+        
+        if isOfferer {
+            createOffer()
+        }
     }
     
     func setupLocalStream() {
@@ -69,7 +127,7 @@ class WebRTCManager: NSObject, ObservableObject {
                     return
                 }
                 print("Offer created: \(sdp.sdp)")
-                self?.sendOffer(sdp)
+                self?.sendWebSocketMessage(["offer": sdp.sdp])
             })
         }
     }
@@ -84,7 +142,7 @@ class WebRTCManager: NSObject, ObservableObject {
                     return
                 }
                 print("Answer created: \(sdp.sdp)")
-                self?.sendAnswer(sdp)
+                self?.sendWebSocketMessage(["answer": sdp.sdp])
             })
         }
     }
@@ -107,125 +165,19 @@ class WebRTCManager: NSObject, ObservableObject {
         print("Remote ICE candidate added: \(candidate.sdp)")
     }
     
-    func sendOffer(_ sdp: RTCSessionDescription) {
-        guard let url = URL(string: "https://blurrr-dating.com/offer") else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        let body = ["session_id": sessionID, "offer": sdp.sdp]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [])
-        
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
+    func sendWebSocketMessage(_ message: [String: Any]) {
+        guard let webSocket = webSocket else { return }
+        let data = try? JSONSerialization.data(withJSONObject: message, options: [])
+        let string = String(data: data!, encoding: .utf8)!
+        webSocket.send(.string(string)) { error in
             if let error = error {
-                print("Error sending offer: \(error.localizedDescription)")
-                return
+                print("WebSocket send error: \(error.localizedDescription)")
             }
-            print("Offer sent successfully")
-        }.resume()
-    }
-    
-    func sendAnswer(_ sdp: RTCSessionDescription) {
-        guard let url = URL(string: "https://blurrr-dating.com/answer") else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        let body = ["session_id": sessionID, "answer": sdp.sdp]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [])
-        
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let error = error {
-                print("Error sending answer: \(error.localizedDescription)")
-                return
-            }
-            print("Answer sent successfully")
-        }.resume()
+        }
     }
     
     func sendCandidate(_ candidate: RTCIceCandidate) {
-        guard let url = URL(string: "https://blurrr-dating.com/candidate") else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        let body = ["session_id": sessionID, "candidate": candidate.sdp]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [])
-        
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let error = error {
-                print("Error sending candidate: \(error.localizedDescription)")
-                return
-            }
-            print("Candidate sent successfully")
-        }.resume()
-    }
-    
-    func pollForOffer() {
-        guard let url = URL(string: "https://blurrr-dating.com/get_offer?session_id=\(sessionID)") else { return }
-        
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            if let error = error {
-                print("Error polling for offer: \(error.localizedDescription)")
-                return
-            }
-            guard let data = data, let json = try? JSONSerialization.jsonObject(with: data, options: []), let dictionary = json as? [String: Any], let sdpString = dictionary["offer"] as? String else {
-                print("No offer found")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                    self.pollForOffer() // Retry after delay
-                }
-                return
-            }
-            
-            let sdp = RTCSessionDescription(type: .offer, sdp: sdpString)
-            self.handleRemoteDescription(sdp)
-        }.resume()
-    }
-    
-    func pollForAnswer() {
-        guard let url = URL(string: "https://blurrr-dating.com/get_answer?session_id=\(sessionID)") else { return }
-        
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            if let error = error {
-                print("Error polling for answer: \(error.localizedDescription)")
-                return
-            }
-            guard let data = data, let json = try? JSONSerialization.jsonObject(with: data, options: []), let dictionary = json as? [String: Any], let sdpString = dictionary["answer"] as? String else {
-                print("No answer found")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                    self.pollForAnswer() // Retry after delay
-                }
-                return
-            }
-            
-            let sdp = RTCSessionDescription(type: .answer, sdp: sdpString)
-            self.peerConnection?.setRemoteDescription(sdp, completionHandler: { (error) in
-                if let error = error {
-                    print("Error setting remote description for answer: \(error.localizedDescription)")
-                }
-            })
-        }.resume()
-    }
-    
-    func pollForCandidates() {
-        guard let url = URL(string: "https://blurrr-dating.com/get_candidates?session_id=\(sessionID)") else { return }
-        
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            if let error = error {
-                print("Error polling for candidates: \(error.localizedDescription)")
-                return
-            }
-            guard let data = data, let json = try? JSONSerialization.jsonObject(with: data, options: []), let dictionary = json as? [String: Any], let candidatesArray = dictionary["candidates"] as? [String] else {
-                print("No candidates found")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                    self.pollForCandidates() // Retry after delay
-                }
-                return
-            }
-            
-            for candidateString in candidatesArray {
-                let candidate = RTCIceCandidate(sdp: candidateString, sdpMLineIndex: 0, sdpMid: nil)
-                self.peerConnection?.add(candidate)
-                print("ICE candidate added: \(candidate.sdp)")
-            }
-        }.resume()
+        sendWebSocketMessage(["candidate": candidate.sdp])
     }
 }
 
@@ -245,9 +197,9 @@ extension WebRTCManager: RTCPeerConnectionDelegate {
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didAdd stream: RTCMediaStream) {
-        if let track = stream.videoTracks.first {
-            self.remoteVideoTrack = track
-            DispatchQueue.main.async {
+        DispatchQueue.main.async {
+            if let track = stream.videoTracks.first {
+                self.remoteVideoTrack = track
                 self.remoteVideoTrack?.add(self.remoteView)
             }
             print("Remote stream added")
@@ -255,7 +207,9 @@ extension WebRTCManager: RTCPeerConnectionDelegate {
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didRemove stream: RTCMediaStream) {
-        self.remoteVideoTrack = nil
+        DispatchQueue.main.async {
+            self.remoteVideoTrack = nil
+        }
         print("Remote stream removed")
     }
     

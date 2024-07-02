@@ -35,7 +35,6 @@ target 'BlurrrDatingApp' do
 
   # Pods for BlurrrDatingApp
   pod 'GoogleWebRTC'
-  pod 'Starscream
 end
 
 post_install do |installer|
