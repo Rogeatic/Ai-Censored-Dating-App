@@ -1,5 +1,4 @@
 import SwiftUI
-<<<<<<< Updated upstream
 import GoogleSignIn
 
 struct ContentView: View {
@@ -14,37 +13,20 @@ struct ContentView: View {
     @State private var navigateToVideoCall: Bool = false
 
     var body: some View {
-        if !isUserSignedIn {
-            LoginView()
-                .onAppear {
-                    GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
-                        if let user = user {
-                            self.displayName = user.profile?.name ?? ""
-                            self.email = user.profile?.email ?? ""
-                            self.avatarURL = user.profile?.imageURL(withDimension: 100) ?? URL(string: "https://example.com/default-avatar.png")!
-                            self.idToken = user.idToken?.tokenString ?? ""
-                            self.isUserSignedIn = true
-                        }
-                    }
-                }
-                .onReceive(NotificationCenter.default.publisher(for: .signInCompleted)) { notification in
-                    if let userInfo = notification.userInfo {
-                        self.displayName = userInfo["displayName"] as? String ?? ""
-                        self.email = userInfo["email"] as? String ?? ""
-                        self.avatarURL = userInfo["avatarURL"] as? URL ?? URL(string: "https://example.com/default-avatar.png")!
-                        self.idToken = userInfo["idToken"] as? String ?? ""
-                        self.isUserSignedIn = true
-                    }
-                }
-        } else {
-            NavigationView {
+        NavigationView {
+            if !isUserSignedIn {
+                LoginView(isUserSignedIn: $isUserSignedIn, displayName: $displayName, email: $email, avatarURL: $avatarURL, idToken: $idToken)
+            } else {
                 VStack {
                     CameraPreviewView(isBlurred: $isBlurred)
-                        .frame(height: 400)
                         .cornerRadius(15)
+                        .frame(height: 400)
                         .padding()
                         .blur(radius: isBlurred ? 100 : 0)
+                        .background(!isBlurred ? Color.clear : Color.darkTeal)
                         .animation(.easeInOut, value: isBlurred)
+                        .cornerRadius(15)
+
 
                     Text("Hello, \(displayName)")
                         .padding()
@@ -52,7 +34,7 @@ struct ContentView: View {
                     Button(action: requestRoomID) {
                         Text(isLoading ? "Joining..." : "Request Room")
                             .padding()
-                            .background(isLoading ? Color.gray : Color.blue)
+                            .background(isLoading ? Color.gray : Color.darkTeal)
                             .foregroundColor(.white)
                             .cornerRadius(8)
                     }
@@ -84,106 +66,24 @@ struct ContentView: View {
                     }
                 }
                 .padding()
-                .onAppear {
-                    print("ContentView appeared")
-                }
                 .background(Color.white)
                 .onTapGesture {
                     UIApplication.shared.endEditing()
                 }
             }
-            .navigationViewStyle(StackNavigationViewStyle())
-=======
-
-struct ContentView: View {
-    var body: some View {
-        VStack {
-            Button("Join P2P Connection") {
-                joinP2PConnection()
-            }
-            .padding()
-            
-            Button("Offer P2P Connection") {
-                offerP2PConnection()
-            }
-            .padding()
->>>>>>> Stashed changes
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-    
-    private func joinP2PConnection() {
-        // Implement joining P2P connection logic
-        // For simplicity, let's assume you're sending a WebSocket request
-        // to the server to check for an available connection.
-        let url = URL(string: "wss://blurrr-dating.com/ws")!
-        var request = URLRequest(url: url)
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        // Example of sending a message to the server
-        let message = "{\"action\": \"join_p2p_connection\"}"
-        WebSocketManager.shared.send(message: message)
-    }
-    
-    private func offerP2PConnection() {
-        // Implement offering P2P connection logic
-        // For simplicity, let's assume you're sending a WebSocket request
-        // to the server to offer an open connection.
-        let url = URL(string: "wss://blurrr-dating.com/ws")!
-        var request = URLRequest(url: url)
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        // Example of sending a message to the server
-        let message = "{\"action\": \"offer_p2p_connection\"}"
-        WebSocketManager.shared.send(message: message)
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 
-    func requestRoomID() {
+    private func requestRoomID() {
+        // Implement room ID request logic
         isLoading = true
-        guard let url = URL(string: "https://blurrr-dating.com/join") else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        let body = ["user_id": email]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [])
-
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            DispatchQueue.main.async {
-                self.isLoading = false
-            }
-            guard let data = data, error == nil else {
-                print("Error: \(error?.localizedDescription ?? "No data")")
-                return
-            }
-            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-                if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                    DispatchQueue.main.async {
-                        if let roomID = responseJSON["room_id"] as? String {
-                            self.roomID = roomID
-                            self.navigateToVideoCall = true
-                        } else if let message = responseJSON["message"] as? String {
-                            print(message)
-                        }
-                    }
-                }
-            }
-        }.resume()
     }
 }
 
-<<<<<<< Updated upstream
+// Helper function to dismiss keyboard
 extension UIApplication {
     func endEditing() {
         sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
-}
-
-extension Notification.Name {
-    static let signInCompleted = Notification.Name("signInCompleted")
-=======
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
->>>>>>> Stashed changes
 }

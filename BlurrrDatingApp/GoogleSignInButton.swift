@@ -2,6 +2,12 @@ import SwiftUI
 import GoogleSignIn
 
 struct LoginView: View {
+    @Binding var isUserSignedIn: Bool
+    @Binding var displayName: String
+    @Binding var email: String
+    @Binding var avatarURL: URL
+    @Binding var idToken: String
+
     var body: some View {
         VStack {
             Text("Please sign in to continue")
@@ -17,7 +23,7 @@ struct LoginView: View {
         }) {
             Text("Sign In with Google")
                 .padding()
-                .background(Color.blue)
+                .background(Color.darkTeal)
                 .foregroundColor(.white)
                 .cornerRadius(8)
         }
@@ -40,20 +46,17 @@ struct LoginView: View {
 
             guard let user = result?.user else { return }
 
-            let userInfo: [String: Any] = [
-                "displayName": user.profile?.name ?? "",
-                "email": user.profile?.email ?? "",
-                "avatarURL": user.profile?.imageURL(withDimension: 100) ?? URL(string: "https://example.com/default-avatar.png")!,
-                "idToken": user.idToken?.tokenString ?? ""
-            ]
-
-            NotificationCenter.default.post(name: .signInCompleted, object: nil, userInfo: userInfo)
+            displayName = user.profile?.name ?? ""
+            email = user.profile?.email ?? ""
+            avatarURL = user.profile?.imageURL(withDimension: 100) ?? URL(string: "https://example.com/default-avatar.png")!
+            idToken = user.idToken?.tokenString ?? ""
+            isUserSignedIn = true
         }
     }
 }
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView()
+        LoginView(isUserSignedIn: .constant(false), displayName: .constant(""), email: .constant(""), avatarURL: .constant(URL(string: "https://example.com/default-avatar.png")!), idToken: .constant(""))
     }
 }

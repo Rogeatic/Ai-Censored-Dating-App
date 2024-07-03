@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2EE0D8B0C28504EAE963FC57 /* Pods_BlurrrDatingApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68CB59C7E01B910E007A22B7 /* Pods_BlurrrDatingApp.framework */; };
-		524664722C1545C100B0358E /* SocketIOManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524664712C1545C100B0358E /* SocketIOManager.swift */; };
+		5242AE8F2C36085100261077 /* WebRTCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5242AE8E2C36085100261077 /* WebRTCManager.swift */; };
 		52734B402BF2FA270077EBFA /* CameraPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52734B3F2BF2FA270077EBFA /* CameraPreviewView.swift */; };
 		527D90262C1EAAE7001226F8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527D90252C1EAAE7001226F8 /* AppDelegate.swift */; };
 		52862EB72C268C6E009F441B /* GoogleSignInButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52862EB62C268C6E009F441B /* GoogleSignInButton.swift */; };
@@ -17,14 +17,10 @@
 		529948A12BDF30E400F9947E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529948A02BDF30E400F9947E /* ContentView.swift */; };
 		529948A32BDF30E600F9947E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 529948A22BDF30E600F9947E /* Assets.xcassets */; };
 		529948A62BDF30E600F9947E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 529948A52BDF30E600F9947E /* Preview Assets.xcassets */; };
-		52B52FE42BF30E5F009BCBCF /* Startingview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B52FE32BF30E5F009BCBCF /* Startingview.swift */; };
-		52B52FE62BF30E97009BCBCF /* ConnectingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B52FE52BF30E97009BCBCF /* ConnectingView.swift */; };
-		52B52FE82BF30EC8009BCBCF /* CallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B52FE72BF30EC8009BCBCF /* CallView.swift */; };
-		52DFE91A2BF9699800C007FC /* JitsiMeetViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DFE9192BF9699800C007FC /* JitsiMeetViewWrapper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		524664712C1545C100B0358E /* SocketIOManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketIOManager.swift; sourceTree = "<group>"; };
+		5242AE8E2C36085100261077 /* WebRTCManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WebRTCManager.swift; path = "/Users/loganbell/Documents/School/Senior Project/Ai-Censored-Dating-App/BlurrrDatingApp/Startups/WebRTCManager.swift"; sourceTree = "<absolute>"; };
 		524B0F4F2BF3250B00E1504A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		52734B3F2BF2FA270077EBFA /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreviewView.swift; sourceTree = "<group>"; };
 		527D90252C1EAAE7001226F8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -35,10 +31,6 @@
 		529948A02BDF30E400F9947E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		529948A22BDF30E600F9947E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		529948A52BDF30E600F9947E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		52B52FE32BF30E5F009BCBCF /* Startingview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Startingview.swift; sourceTree = "<group>"; };
-		52B52FE52BF30E97009BCBCF /* ConnectingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectingView.swift; sourceTree = "<group>"; };
-		52B52FE72BF30EC8009BCBCF /* CallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallView.swift; sourceTree = "<group>"; };
-		52DFE9192BF9699800C007FC /* JitsiMeetViewWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitsiMeetViewWrapper.swift; sourceTree = "<group>"; };
 		68CB59C7E01B910E007A22B7 /* Pods_BlurrrDatingApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BlurrrDatingApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8477422C06B8BC1ADD036D5D /* Pods-BlurrrDatingApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlurrrDatingApp.release.xcconfig"; path = "Target Support Files/Pods-BlurrrDatingApp/Pods-BlurrrDatingApp.release.xcconfig"; sourceTree = "<group>"; };
 		BD33D066767E57EB7B9AA1FD /* Pods-BlurrrDatingApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlurrrDatingApp.debug.xcconfig"; path = "Target Support Files/Pods-BlurrrDatingApp/Pods-BlurrrDatingApp.debug.xcconfig"; sourceTree = "<group>"; };
@@ -64,15 +56,13 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		528C247E2C1543090012C163 /* USELESS OLD */ = {
+		5242AE8D2C35FF3A00261077 /* Startups */ = {
 			isa = PBXGroup;
 			children = (
-				52B52FE32BF30E5F009BCBCF /* Startingview.swift */,
-				52B52FE52BF30E97009BCBCF /* ConnectingView.swift */,
-				52B52FE72BF30EC8009BCBCF /* CallView.swift */,
-				52DFE9192BF9699800C007FC /* JitsiMeetViewWrapper.swift */,
+				5299489E2BDF30E400F9947E /* BlurrrDatingAppApp.swift */,
+				527D90252C1EAAE7001226F8 /* AppDelegate.swift */,
 			);
-			path = "USELESS OLD";
+			path = Startups;
 			sourceTree = "<group>";
 		};
 		529948922BDF30E400F9947E = {
@@ -96,15 +86,13 @@
 		5299489D2BDF30E400F9947E /* BlurrrDatingApp */ = {
 			isa = PBXGroup;
 			children = (
-				528C247E2C1543090012C163 /* USELESS OLD */,
 				524B0F4F2BF3250B00E1504A /* Info.plist */,
+				5242AE8D2C35FF3A00261077 /* Startups */,
 				52734B3F2BF2FA270077EBFA /* CameraPreviewView.swift */,
-				5299489E2BDF30E400F9947E /* BlurrrDatingAppApp.swift */,
 				529948A02BDF30E400F9947E /* ContentView.swift */,
 				52862EB62C268C6E009F441B /* GoogleSignInButton.swift */,
-				527D90252C1EAAE7001226F8 /* AppDelegate.swift */,
 				528C247F2C1543280012C163 /* VideoCallView.swift */,
-				524664712C1545C100B0358E /* SocketIOManager.swift */,
+				5242AE8E2C36085100261077 /* WebRTCManager.swift */,
 				529948A22BDF30E600F9947E /* Assets.xcassets */,
 				529948A42BDF30E600F9947E /* Preview Content */,
 			);
@@ -247,14 +235,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				52862EB72C268C6E009F441B /* GoogleSignInButton.swift in Sources */,
-				52B52FE82BF30EC8009BCBCF /* CallView.swift in Sources */,
-				52DFE91A2BF9699800C007FC /* JitsiMeetViewWrapper.swift in Sources */,
-				52B52FE42BF30E5F009BCBCF /* Startingview.swift in Sources */,
-				524664722C1545C100B0358E /* SocketIOManager.swift in Sources */,
-				52B52FE62BF30E97009BCBCF /* ConnectingView.swift in Sources */,
 				528C24802C1543280012C163 /* VideoCallView.swift in Sources */,
 				529948A12BDF30E400F9947E /* ContentView.swift in Sources */,
 				5299489F2BDF30E400F9947E /* BlurrrDatingAppApp.swift in Sources */,
+				5242AE8F2C36085100261077 /* WebRTCManager.swift in Sources */,
 				527D90262C1EAAE7001226F8 /* AppDelegate.swift in Sources */,
 				52734B402BF2FA270077EBFA /* CameraPreviewView.swift in Sources */,
 			);
