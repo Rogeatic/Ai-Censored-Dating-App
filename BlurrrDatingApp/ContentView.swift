@@ -39,22 +39,24 @@ struct ContentView: View {
                 LoginView(isUserSignedIn: $isUserSignedIn, displayName: $displayName, email: $email, avatarURL: $avatarURL, idToken: $idToken)
             } else {
                 VStack {
-                    VideoView(isBlurred: $isBlurred, isLocalVideoActive: $isLocalVideoActive, isRemoteVideoActive: $isRemoteVideoActive)
+                    CameraPreviewView(isBlurred: $isBlurred)
                         .cornerRadius(15)
                         .frame(height: 400)
                         .padding()
                         .blur(radius: isBlurred ? 100 : 0)
                         .background(isBlurred ? Color.teal : Color.clear)
                         .animation(.easeInOut, value: isBlurred)
+                        .cornerRadius(15)
+
                     
                     Text("Hello, \(displayName)")
                         .padding()
 
-                    Text("Signaling Connected: \(signalingConnected ? "Yes" : "No")")
-                    Text("Local SDP: \(hasLocalSdp ? "Yes" : "No")")
-                    Text("Local Candidates: \(localCandidateCount)")
-                    Text("Remote SDP: \(hasRemoteSdp ? "Yes" : "No")")
-                    Text("Remote Candidates: \(remoteCandidateCount)")
+//                    Text("Signaling Connected: \(signalingConnected ? "Yes" : "No")")
+//                    Text("Local SDP: \(hasLocalSdp ? "Yes" : "No")")
+//                    Text("Local Candidates: \(localCandidateCount)")
+//                    Text("Remote SDP: \(hasRemoteSdp ? "Yes" : "No")")
+//                    Text("Remote Candidates: \(remoteCandidateCount)")
 
                     Button(action: sendOffer) {
                         Text(isLoading ? "Joining..." : "Send Offer")
@@ -64,7 +66,7 @@ struct ContentView: View {
                             .cornerRadius(8)
                     }
                     .padding()
-                    .disabled(isLoading)
+                   // .disabled(isLoading)
 
                     Button(action: sendAnswer) {
                         Text(isLoading ? "Joining..." : "Send Answer")
@@ -74,9 +76,9 @@ struct ContentView: View {
                             .cornerRadius(8)
                     }
                     .padding()
-                    .disabled(isLoading)
+                    //.disabled(isLoading)
                     
-                    NavigationLink(destination: VideoDetailView(webRTCHandler: webRTCHandler)) {
+                    NavigationLink(destination: VideoView(webRTCHandler: webRTCHandler)) {
                         Text("Go to Video View")
                             .padding()
                             .background(Color.blue)
@@ -84,7 +86,7 @@ struct ContentView: View {
                             .cornerRadius(8)
                     }
                     .padding()
-                    .disabled(!isLocalVideoActive || !isRemoteVideoActive)
+                    //.disabled(!isLocalVideoActive || !isRemoteVideoActive)
                 }
                 .padding()
                 .background(Color.white)
@@ -116,42 +118,6 @@ struct ContentView: View {
             signalingHandler.send(sdp: sdp)
             isLoading = false
             hasLocalSdp = true
-        }
-    }
-}
-
-struct VideoView: UIViewRepresentable {
-    @Binding var isBlurred: Bool
-    @Binding var isLocalVideoActive: Bool
-    @Binding var isRemoteVideoActive: Bool
-
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        let localRenderer = RTCMTLVideoView(frame: view.bounds)
-        let remoteRenderer = RTCMTLVideoView(frame: view.bounds)
-
-        localRenderer.videoContentMode = .scaleAspectFill
-        remoteRenderer.videoContentMode = .scaleAspectFill
-
-        view.addSubview(remoteRenderer)
-        view.addSubview(localRenderer)
-
-        context.coordinator.setupRenderers(localRenderer: localRenderer, remoteRenderer: remoteRenderer)
-        
-        return view
-    }
-
-    func updateUIView(_ uiView: UIView, context: Context) {
-        // Update UI if needed
-    }
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator()
-    }
-
-    class Coordinator {
-        func setupRenderers(localRenderer: RTCMTLVideoView, remoteRenderer: RTCMTLVideoView) {
-            // Setup video renderers
         }
     }
 }
