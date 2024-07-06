@@ -1,7 +1,7 @@
 import Foundation
 import WebRTC
 
-protocol SignalManager: AnyObject {
+protocol SignalManager {
     func signalClientDidConnect(_ signalingHandler: SignalingHandler)
     func signalClientDidDisconnect(_ signalingHandler: SignalingHandler)
     func signalClient(_ signalingHandler: SignalingHandler, didReceiveRemoteSdp sdp: RTCSessionDescription)
@@ -12,7 +12,7 @@ final class SignalingHandler {
     private let webSocket: WebSocketHandler
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
-    weak var delegate: SignalManager?
+    var delegate: SignalManager?
     
     init(webSocket: WebSocketHandler) {
         self.webSocket = webSocket

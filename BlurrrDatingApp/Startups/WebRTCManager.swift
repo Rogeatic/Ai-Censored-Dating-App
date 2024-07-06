@@ -1,7 +1,7 @@
 import Foundation
 import WebRTC
 
-protocol WebRTCManager: AnyObject {
+protocol WebRTCManager {
     func webRTCHandler(_ client: WebRTCHandler, didDiscoverLocalCandidate candidate: RTCIceCandidate)
     func webRTCHandler(_ client: WebRTCHandler, didChangeConnectionState state: RTCIceConnectionState)
     func webRTCHandler(_ client: WebRTCHandler, didReceiveData data: Data)
@@ -18,7 +18,7 @@ final class WebRTCHandler: NSObject {
         return RTCPeerConnectionFactory(encoderFactory: videoEncoderFactory, decoderFactory: videoDecoderFactory)
     }()
     
-    weak var delegate: WebRTCManager?
+    var delegate: WebRTCManager?
     private let peerConnection: RTCPeerConnection
     private let rtcAudioSession =  RTCAudioSession.sharedInstance()
     private let audioQueue = DispatchQueue(label: "audio")

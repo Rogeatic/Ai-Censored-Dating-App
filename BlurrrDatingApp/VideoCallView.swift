@@ -1,67 +1,49 @@
 import SwiftUI
 import WebRTC
 
-struct VideoView: UIViewControllerRepresentable {
-    let webRTCHandler: WebRTCHandler
+struct VideoDetailView: View {
+    var webRTCHandler: WebRTCHandler
 
-    func makeUIViewController(context: Context) -> VideoViewController {
-        return VideoViewController(webRTCHandler: webRTCHandler)
-    }
+    var body: some View {
+        VStack {
+            Text("Video Detail View")
+                .font(.largeTitle)
+                .padding()
 
-    func updateUIViewController(_ uiViewController: VideoViewController, context: Context) {
-        // No update logic needed for now
+            VideoView(isBlurred: .constant(false), isLocalVideoActive: .constant(true), isRemoteVideoActive: .constant(true))
+                .cornerRadius(15)
+                .frame(height: 400)
+                .padding()
+                .background(Color.black)
+                .cornerRadius(15)
+
+            Button(action: {
+                webRTCHandler.hideVideo()
+            }) {
+                Text("Hide Video")
+                    .padding()
+                    .background(Color.red)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+            .padding()
+
+            Button(action: {
+                webRTCHandler.showVideo()
+            }) {
+                Text("Show Video")
+                    .padding()
+                    .background(Color.green)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+            .padding()
+        }
     }
 }
 
-class VideoViewController: UIViewController {
-
-    @IBOutlet private weak var localVideoView: UIView?
-    private let webRTCHandler: WebRTCHandler
-
-    init(webRTCHandler: WebRTCHandler) {
-        self.webRTCHandler = webRTCHandler
-        super.init(nibName: String(describing: VideoViewController.self), bundle: Bundle.main)
-    }
-    
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        let localRenderer = RTCMTLVideoView(frame: self.localVideoView?.frame ?? CGRect.zero)
-        let remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
-        localRenderer.videoContentMode = .scaleAspectFill
-        remoteRenderer.videoContentMode = .scaleAspectFill
-
-        self.webRTCHandler.LocalVideo(renderer: localRenderer)
-        self.webRTCHandler.renderRemoteVideo(to: remoteRenderer)
-        
-        if let localVideoView = self.localVideoView {
-            self.embedView(localRenderer, into: localVideoView)
-        }
-        self.embedView(remoteRenderer, into: self.view)
-        self.view.sendSubviewToBack(remoteRenderer)
-    }
-    
-    private func embedView(_ view: UIView, into containerView: UIView) {
-        containerView.addSubview(view)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[view]|",
-                                                                    options: [],
-                                                                    metrics: nil,
-                                                                    views: ["view":view]))
-        
-        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[view]|",
-                                                                    options: [],
-                                                                    metrics: nil,
-                                                                    views: ["view":view]))
-        containerView.layoutIfNeeded()
-    }
-    
-    @IBAction private func backDidTap(_ sender: Any) {
-        self.dismiss(animated: true)
+struct VideoDetailView_Previews: PreviewProvider {
+    static var previews: some View {
+        VideoDetailView(webRTCHandler: WebRTCHandler(iceServers: ["stun:stun.l.google.com:19302"]))
     }
 }

@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		2EE0D8B0C28504EAE963FC57 /* Pods_BlurrrDatingApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68CB59C7E01B910E007A22B7 /* Pods_BlurrrDatingApp.framework */; };
-		5218B1F82C377C1000DE1322 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5218B1F72C377C1000DE1322 /* MainViewController.swift */; };
 		5242AE8F2C36085100261077 /* WebRTCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5242AE8E2C36085100261077 /* WebRTCManager.swift */; };
 		5242AE912C360A6400261077 /* SocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5242AE902C360A6400261077 /* SocketManager.swift */; };
 		526C1C6D2C36143700DF7257 /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 526C1C6C2C36143700DF7257 /* WebRTC */; };
@@ -27,7 +26,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		5218B1F72C377C1000DE1322 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		5242AE8E2C36085100261077 /* WebRTCManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WebRTCManager.swift; path = "/Users/loganbell/Documents/School/Senior Project/Ai-Censored-Dating-App/BlurrrDatingApp/Startups/WebRTCManager.swift"; sourceTree = "<absolute>"; };
 		5242AE902C360A6400261077 /* SocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketManager.swift; sourceTree = "<group>"; };
 		524B0F4F2BF3250B00E1504A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -114,7 +112,6 @@
 			children = (
 				524B0F4F2BF3250B00E1504A /* Info.plist */,
 				529948A02BDF30E400F9947E /* ContentView.swift */,
-				5218B1F72C377C1000DE1322 /* MainViewController.swift */,
 				52734B3F2BF2FA270077EBFA /* CameraPreviewView.swift */,
 				52862EB62C268C6E009F441B /* GoogleSignInButton.swift */,
 				528C247F2C1543280012C163 /* VideoCallView.swift */,
@@ -266,7 +263,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				52A0E6592C374F45004C9F46 /* StateManagement.swift in Sources */,
-				5218B1F82C377C1000DE1322 /* MainViewController.swift in Sources */,
 				52862EB72C268C6E009F441B /* GoogleSignInButton.swift in Sources */,
 				528C24802C1543280012C163 /* VideoCallView.swift in Sources */,
 				5242AE912C360A6400261077 /* SocketManager.swift in Sources */,
