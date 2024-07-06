@@ -1,89 +1,88 @@
 import Foundation
 import WebRTC
 
-extension RTCIceConnectionState: CustomStringConvertible {
+protocol CustomStringConvertibleEnum {
+    var description: String { get }
+}
+
+extension RTCIceConnectionState: CustomStringConvertibleEnum {
+    private static let descriptions: [RTCIceConnectionState: String] = [
+        .new: "new",
+        .checking: "checking",
+        .connected: "connected",
+        .completed: "completed",
+        .failed: "failed",
+        .disconnected: "disconnected",
+        .closed: "closed",
+        .count: "count"
+    ]
+    
     public var description: String {
-        switch self {
-        case .new:          return "new"
-        case .checking:     return "checking"
-        case .connected:    return "connected"
-        case .completed:    return "completed"
-        case .failed:       return "failed"
-        case .disconnected: return "disconnected"
-        case .closed:       return "closed"
-        case .count:        return "count"
-        @unknown default:   return "Unknown \(self.rawValue)"
-        }
+        return RTCIceConnectionState.descriptions[self] ?? "Unknown \(self.rawValue)"
     }
 }
 
-extension RTCSignalingState: CustomStringConvertible {
+extension RTCSignalingState: CustomStringConvertibleEnum {
+    private static let descriptions: [RTCSignalingState: String] = [
+        .stable: "stable",
+        .haveLocalOffer: "haveLocalOffer",
+        .haveLocalPrAnswer: "haveLocalPrAnswer",
+        .haveRemoteOffer: "haveRemoteOffer",
+        .haveRemotePrAnswer: "haveRemotePrAnswer",
+        .closed: "closed"
+    ]
+    
     public var description: String {
-        switch self {
-        case .stable:               return "stable"
-        case .haveLocalOffer:       return "haveLocalOffer"
-        case .haveLocalPrAnswer:    return "haveLocalPrAnswer"
-        case .haveRemoteOffer:      return "haveRemoteOffer"
-        case .haveRemotePrAnswer:   return "haveRemotePrAnswer"
-        case .closed:               return "closed"
-        @unknown default:   return "Unknown \(self.rawValue)"
-        }
+        return RTCSignalingState.descriptions[self] ?? "Unknown \(self.rawValue)"
     }
 }
 
-extension RTCIceGatheringState: CustomStringConvertible {
+extension RTCIceGatheringState: CustomStringConvertibleEnum {
+    private static let descriptions: [RTCIceGatheringState: String] = [
+        .new: "new",
+        .gathering: "gathering",
+        .complete: "complete"
+    ]
+    
     public var description: String {
-        switch self {
-        case .new:          return "new"
-        case .gathering:    return "gathering"
-        case .complete:     return "complete"
-        @unknown default:   return "Unknown \(self.rawValue)"
-        }
+        return RTCIceGatheringState.descriptions[self] ?? "Unknown \(self.rawValue)"
     }
 }
 
-extension RTCDataChannelState: CustomStringConvertible {
+extension RTCDataChannelState: CustomStringConvertibleEnum {
+    private static let descriptions: [RTCDataChannelState: String] = [
+        .connecting: "connecting",
+        .open: "open",
+        .closing: "closing",
+        .closed: "closed"
+    ]
+    
     public var description: String {
-        switch self {
-        case .connecting:   return "connecting"
-        case .open:         return "open"
-        case .closing:      return "closing"
-        case .closed:       return "closed"
-        @unknown default:   return "Unknown \(self.rawValue)"
-        }
+        return RTCDataChannelState.descriptions[self] ?? "Unknown \(self.rawValue)"
     }
 }
 
-/// This enum is a swift wrapper over `RTCSdpType` for easy encode and decode
+
 enum SdpType: String, Codable {
     case offer, prAnswer, answer, rollback
     
     var rtcSdpType: RTCSdpType {
         switch self {
-        case .offer:    return .offer
-        case .answer:   return .answer
+        case .offer: return .offer
+        case .answer: return .answer
         case .prAnswer: return .prAnswer
         case .rollback: return .rollback
         }
     }
 }
 
-/// This struct is a swift wrapper over `RTCSessionDescription` for easy encode and decode
 struct SessionDescription: Codable {
     let sdp: String
     let type: SdpType
     
     init(from rtcSessionDescription: RTCSessionDescription) {
         self.sdp = rtcSessionDescription.sdp
-        
-        switch rtcSessionDescription.type {
-        case .offer:    self.type = .offer
-        case .prAnswer: self.type = .prAnswer
-        case .answer:   self.type = .answer
-        case .rollback: self.type = .rollback
-        @unknown default:
-            fatalError("Unknown RTCSessionDescription type: \(rtcSessionDescription.type.rawValue)")
-        }
+        self.type = SdpType(rtcSessionDescriptionType: rtcSessionDescription.type)
     }
     
     var rtcSessionDescription: RTCSessionDescription {
@@ -91,7 +90,19 @@ struct SessionDescription: Codable {
     }
 }
 
-/// This struct is a swift wrapper over `RTCIceCandidate` for easy encode and decode
+extension SdpType {
+    init(rtcSessionDescriptionType: RTCSdpType) {
+        switch rtcSessionDescriptionType {
+        case .offer: self = .offer
+        case .prAnswer: self = .prAnswer
+        case .answer: self = .answer
+        case .rollback: self = .rollback
+        @unknown default:
+            fatalError("Unknown RTCSessionDescription type: \(rtcSessionDescriptionType.rawValue)")
+        }
+    }
+}
+
 struct IceCandidate: Codable {
     let sdp: String
     let sdpMLineIndex: Int32

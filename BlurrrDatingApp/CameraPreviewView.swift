@@ -3,22 +3,26 @@ import AVFoundation
 import CoreML
 import Vision
 import NSFWDetector
+import WebRTC
 
 struct CameraPreviewView: UIViewRepresentable {
     @Binding var isBlurred: Bool
+    var videoTrack: RTCVideoTrack?
 
-    class CameraPreviewLayer: UIView, AVCaptureVideoDataOutputSampleBufferDelegate {
+    class CameraPreviewLayer: UIView, AVCaptureVideoDataOutputSampleBufferDelegate, RTCVideoRenderer {
         var captureSession: AVCaptureSession
         var previewLayer: AVCaptureVideoPreviewLayer
         var nsfwDetector = NSFWDetector.shared
         @Binding var isBlurred: Bool
+        var videoTrack: RTCVideoTrack?
         
         private var blurTimer: Timer?
 
-        init(session: AVCaptureSession, isBlurred: Binding<Bool>) {
+        init(session: AVCaptureSession, isBlurred: Binding<Bool>, videoTrack: RTCVideoTrack?) {
             self.captureSession = session
             self.previewLayer = AVCaptureVideoPreviewLayer(session: session)
             self._isBlurred = isBlurred
+            self.videoTrack = videoTrack
             
             super.init(frame: .zero)
             
@@ -26,6 +30,7 @@ struct CameraPreviewView: UIViewRepresentable {
             layer.addSublayer(previewLayer)
             
             setupVideoOutput()
+            videoTrack?.add(self)
         }
         
         required init?(coder: NSCoder) {
@@ -77,7 +82,6 @@ struct CameraPreviewView: UIViewRepresentable {
                     DispatchQueue.main.async {
                         if confidence > 0.72 {
                             self.applyCensoring()
-                            //print("NSFW content detected with confidence: \(confidence)")
                         } else {
                             self.scheduleRemoveCensoring()
                         }
@@ -89,7 +93,6 @@ struct CameraPreviewView: UIViewRepresentable {
         }
         
         func applyCensoring() {
-            //print("Applying censoring...")
             blurTimer?.invalidate()
             isBlurred = true
             blurTimer = nil
@@ -97,13 +100,42 @@ struct CameraPreviewView: UIViewRepresentable {
         
         func scheduleRemoveCensoring() {
             if blurTimer == nil {
-                //print("Scheduling removal of censoring...")
                 blurTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in
-                    //print("Removing censoring...")
                     self.isBlurred = false
                     self.blurTimer = nil
                 }
             }
+        }
+        
+        // RTCVideoRenderer methods
+        func setSize(_ size: CGSize) {
+            DispatchQueue.main.async {
+                self.previewLayer.frame = CGRect(origin: .zero, size: size)
+            }
+        }
+        
+        func renderFrame(_ frame: RTCVideoFrame?) {
+            guard let pixelBuffer = frame?.buffer as? RTCCVPixelBuffer else { return }
+            let ciImage = CIImage(cvPixelBuffer: pixelBuffer.pixelBuffer)
+            let context = CIContext()
+            guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return }
+            let uiImage = UIImage(cgImage: cgImage)
+            
+            // Check the image for NSFW content
+            nsfwDetector.check(image: uiImage, completion: { result in
+                switch result {
+                case let .success(nsfwConfidence: confidence):
+                    DispatchQueue.main.async {
+                        if confidence > 0.72 {
+                            self.applyCensoring()
+                        } else {
+                            self.scheduleRemoveCensoring()
+                        }
+                    }
+                default:
+                    break
+                }
+            })
         }
     }
     
@@ -112,7 +144,7 @@ struct CameraPreviewView: UIViewRepresentable {
         session.sessionPreset = .high
         
         guard let frontCamera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) else {
-            return CameraPreviewLayer(session: session, isBlurred: $isBlurred)
+            return CameraPreviewLayer(session: session, isBlurred: $isBlurred, videoTrack: videoTrack)
         }
         
         DispatchQueue.global(qos: .userInitiated).async {
@@ -128,7 +160,7 @@ struct CameraPreviewView: UIViewRepresentable {
             }
         }
         
-        return CameraPreviewLayer(session: session, isBlurred: $isBlurred)
+        return CameraPreviewLayer(session: session, isBlurred: $isBlurred, videoTrack: videoTrack)
     }
     
     func updateUIView(_ uiView: CameraPreviewLayer, context: Context) {
@@ -137,5 +169,6 @@ struct CameraPreviewView: UIViewRepresentable {
     
     static func dismantleUIView(_ uiView: CameraPreviewLayer, coordinator: ()) {
         uiView.captureSession.stopRunning()
+        uiView.videoTrack?.remove(uiView)
     }
 }

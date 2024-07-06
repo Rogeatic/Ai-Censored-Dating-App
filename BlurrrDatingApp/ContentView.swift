@@ -1,5 +1,7 @@
 import SwiftUI
 import WebRTC
+import AVFoundation
+
 
 struct ContentView: View {
     // Google sign-in info
@@ -39,24 +41,17 @@ struct ContentView: View {
                 LoginView(isUserSignedIn: $isUserSignedIn, displayName: $displayName, email: $email, avatarURL: $avatarURL, idToken: $idToken)
             } else {
                 VStack {
-                    CameraPreviewView(isBlurred: $isBlurred)
+                    CameraPreviewView(isBlurred: $isBlurred, videoTrack: webRTCHandler.localVideoTrack)
                         .cornerRadius(15)
                         .frame(height: 400)
                         .padding()
                         .blur(radius: isBlurred ? 100 : 0)
-                        .background(isBlurred ? Color.teal : Color.clear)
+                        .background(isBlurred ? AnyView(LinearGradient(gradient: Gradient(colors: [Color.darkTeal, Color.darkTeal1]), startPoint: .topLeading, endPoint: .bottomTrailing)) : AnyView(Color.clear))
                         .animation(.easeInOut, value: isBlurred)
                         .cornerRadius(15)
 
-                    
                     Text("Hello, \(displayName)")
                         .padding()
-
-//                    Text("Signaling Connected: \(signalingConnected ? "Yes" : "No")")
-//                    Text("Local SDP: \(hasLocalSdp ? "Yes" : "No")")
-//                    Text("Local Candidates: \(localCandidateCount)")
-//                    Text("Remote SDP: \(hasRemoteSdp ? "Yes" : "No")")
-//                    Text("Remote Candidates: \(remoteCandidateCount)")
 
                     Button(action: sendOffer) {
                         Text(isLoading ? "Joining..." : "Send Offer")

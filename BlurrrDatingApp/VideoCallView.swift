@@ -1,5 +1,8 @@
 import SwiftUI
 import WebRTC
+import CoreML
+import Vision
+import NSFWDetector
 
 struct VideoView: View {
     var webRTCHandler: WebRTCHandler
@@ -8,13 +11,17 @@ struct VideoView: View {
         ZStack {
             RemoteVideoView(webRTCHandler: webRTCHandler)
                 .edgesIgnoringSafeArea(.all)
-            LocalVideoView(webRTCHandler: webRTCHandler)
-                .frame(width: 150, height: 200)
-                .cornerRadius(15)
-                .padding()
-                .background(Color.black.opacity(0.6))
-                .cornerRadius(15)
-                .padding()
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    LocalVideoView(webRTCHandler: webRTCHandler)
+                        .frame(width: 150, height: 200)
+                        .cornerRadius(15)
+                        .background(Color.clear) // Ensure background is clear
+                        .padding()
+                }
+            }
         }
     }
 }
@@ -44,3 +51,4 @@ struct RemoteVideoView: UIViewRepresentable {
     
     func updateUIView(_ uiView: UIView, context: Context) {}
 }
+

@@ -11,9 +11,15 @@ struct LoginView: View {
     var body: some View {
         VStack {
             Text("Simply Login To Begin Greatness-")
-            signInButton
-                .frame(width: 200, height: 50)
-                .padding()
+            if isUserSignedIn {
+                SpinnerView()
+                    .frame(width: 50, height: 50)
+                    .padding()
+            } else {
+                signInButton
+                    .frame(width: 200, height: 50)
+                    .padding()
+            }
         }
     }
 
@@ -21,9 +27,9 @@ struct LoginView: View {
         Button(action: {
             signInWithGoogle()
         }) {
-            Text(isUserSignedIn ? "Joining..." : "Sign In with Google")
+            Text("Sign In with Google")
                 .padding()
-                .background(LinearGradient(gradient: Gradient(colors: [Color.darkTeal, Color.darkTeal1]), startPoint: .leading, endPoint: .trailing))
+                .background(LinearGradient(gradient: Gradient(colors: [Color.darkTeal, Color.darkTeal1]), startPoint: .topLeading, endPoint: .bottomTrailing))
                 .foregroundColor(.white)
                 .cornerRadius(8)
         }
@@ -52,6 +58,20 @@ struct LoginView: View {
             idToken = user.idToken?.tokenString ?? ""
             isUserSignedIn = true
         }
+    }
+}
+
+struct SpinnerView: View {
+    @State private var isAnimating: Bool = false
+
+    var body: some View {
+        Text("B")
+            .font(.largeTitle)
+            .rotationEffect(Angle(degrees: isAnimating ? 360 : 0))
+            .animation(Animation.linear(duration: 1).repeatForever(autoreverses: false))
+            .onAppear {
+                self.isAnimating = true
+            }
     }
 }
 
