@@ -163,15 +163,17 @@ extension ContentView: WebRTCManager {
     }
     
     func webRTCHandler(_ client: WebRTCHandler, didChangeConnectionState state: RTCIceConnectionState) {
-        switch state {
-        case .connected, .completed:
-            isLocalVideoActive = true
-            isRemoteVideoActive = true
-        case .disconnected, .failed, .closed:
-            isLocalVideoActive = false
-            isRemoteVideoActive = false
-        default:
-            break
+        DispatchQueue.main.async {
+            switch state {
+            case .connected, .completed:
+                self.isLocalVideoActive = true
+                self.isRemoteVideoActive = true
+            case .disconnected, .failed, .closed:
+                self.isLocalVideoActive = false
+                self.isRemoteVideoActive = false
+            default:
+                break
+            }
         }
     }
     
