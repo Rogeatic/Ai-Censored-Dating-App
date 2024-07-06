@@ -14,12 +14,10 @@ PODS:
     - GTMSessionFetcher/Core (< 4.0, >= 3.3)
   - GTMSessionFetcher/Core (3.5.0)
   - NSFWDetector (1.1.2)
-  - Starscream (4.0.8)
 
 DEPENDENCIES:
   - GoogleSignIn
   - NSFWDetector
-  - Starscream
 
 SPEC REPOS:
   trunk:
@@ -28,7 +26,6 @@ SPEC REPOS:
     - GTMAppAuth
     - GTMSessionFetcher
     - NSFWDetector
-    - Starscream
 
 SPEC CHECKSUMS:
   AppAuth: 501c04eda8a8d11f179dbe8637b7a91bb7e5d2fa
@@ -36,8 +33,7 @@ SPEC CHECKSUMS:
   GTMAppAuth: f69bd07d68cd3b766125f7e072c45d7340dea0de
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
   NSFWDetector: d6eca9759743b5e43778818078d53711576e929f
-  Starscream: 19b5533ddb925208db698f0ac508a100b884a1b9
 
-PODFILE CHECKSUM: 41664e10e33b8684bcc3db3ee9768688292b4e7c
+PODFILE CHECKSUM: 1bbedd85df1a5bed0ea3d0002667544f7609a1f7
 
 COCOAPODS: 1.15.2

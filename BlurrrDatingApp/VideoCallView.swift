@@ -1,69 +1,67 @@
 import SwiftUI
-import WebKit
+import WebRTC
 
-struct VideoCallView: UIViewControllerRepresentable {
-    let roomID: String
-    let displayName: String
-    let email: String
-    let avatarURL: String
-    let idToken: String
+struct VideoView: UIViewControllerRepresentable {
+    let webRTCHandler: WebRTCHandler
 
-    class Coordinator: NSObject, WKNavigationDelegate {
-        var parent: VideoCallView
-
-        init(parent: VideoCallView) {
-            self.parent = parent
-        }
-
-        func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-            print("Failed to load URL: \(error.localizedDescription)")
-        }
-        
-        func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-            print("Failed to navigate: \(error.localizedDescription)")
-        }
+    func makeUIViewController(context: Context) -> VideoViewController {
+        return VideoViewController(webRTCHandler: webRTCHandler)
     }
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator(parent: self)
+    func updateUIViewController(_ uiViewController: VideoViewController, context: Context) {
+        // No update logic needed for now
     }
+}
 
-    func makeUIViewController(context: Context) -> UIViewController {
-        let viewController = UIViewController()
-        let webView = WKWebView()
-        webView.navigationDelegate = context.coordinator
+class VideoViewController: UIViewController {
 
-        let jitsiMeetURL = URL(string: "https://blurrr-dating.com/\(roomID)")!
-        var request = URLRequest(url: jitsiMeetURL)
+    @IBOutlet private weak var localVideoView: UIView?
+    private let webRTCHandler: WebRTCHandler
+
+    init(webRTCHandler: WebRTCHandler) {
+        self.webRTCHandler = webRTCHandler
+        super.init(nibName: String(describing: VideoViewController.self), bundle: Bundle.main)
+    }
+    
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
-        // Prepare user information to pass to Jitsi Meet
-        let userInfo = [
-            "displayName": displayName,
-            "email": email,
-            "avatarURL": avatarURL,
-            "idToken": idToken
-        ]
+        let localRenderer = RTCMTLVideoView(frame: self.localVideoView?.frame ?? CGRect.zero)
+        let remoteRenderer = RTCMTLVideoView(frame: self.view.frame)
+        localRenderer.videoContentMode = .scaleAspectFill
+        remoteRenderer.videoContentMode = .scaleAspectFill
+
+        self.webRTCHandler.LocalVideo(renderer: localRenderer)
+        self.webRTCHandler.renderRemoteVideo(to: remoteRenderer)
         
-        // Convert userInfo to JSON string
-        if let userInfoData = try? JSONSerialization.data(withJSONObject: userInfo, options: []),
-           let userInfoString = String(data: userInfoData, encoding: .utf8) {
-            let userScript = WKUserScript(source: "window.jitsiMeetExternalAPI = window.jitsiMeetExternalAPI || {}; window.jitsiMeetExternalAPI.userInfo = \(userInfoString);", injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-            webView.configuration.userContentController.addUserScript(userScript)
+        if let localVideoView = self.localVideoView {
+            self.embedView(localRenderer, into: localVideoView)
         }
-
-        webView.load(request)
-        viewController.view = webView
-
-        webView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            webView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
-            webView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
-            webView.topAnchor.constraint(equalTo: viewController.view.topAnchor),
-            webView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
-        ])
-
-        return viewController
+        self.embedView(remoteRenderer, into: self.view)
+        self.view.sendSubviewToBack(remoteRenderer)
     }
-
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+    
+    private func embedView(_ view: UIView, into containerView: UIView) {
+        containerView.addSubview(view)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[view]|",
+                                                                    options: [],
+                                                                    metrics: nil,
+                                                                    views: ["view":view]))
+        
+        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[view]|",
+                                                                    options: [],
+                                                                    metrics: nil,
+                                                                    views: ["view":view]))
+        containerView.layoutIfNeeded()
+    }
+    
+    @IBAction private func backDidTap(_ sender: Any) {
+        self.dismiss(animated: true)
+    }
 }

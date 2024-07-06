@@ -6,7 +6,8 @@ struct BlurrrDatingAppApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(signalingHandler: appDelegate.signalClient,
+                        webRTCHandler: appDelegate.webRTCHandler)
                 .navigationViewStyle(StackNavigationViewStyle())
         }
     }

@@ -75,7 +75,7 @@ struct CameraPreviewView: UIViewRepresentable {
                 switch result {
                 case let .success(nsfwConfidence: confidence):
                     DispatchQueue.main.async {
-                        if confidence > 0.82 {
+                        if confidence > 0.72 {
                             self.applyCensoring()
                             //print("NSFW content detected with confidence: \(confidence)")
                         } else {

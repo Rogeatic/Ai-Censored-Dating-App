@@ -8,7 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		2EE0D8B0C28504EAE963FC57 /* Pods_BlurrrDatingApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68CB59C7E01B910E007A22B7 /* Pods_BlurrrDatingApp.framework */; };
+		5218B1F82C377C1000DE1322 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5218B1F72C377C1000DE1322 /* MainViewController.swift */; };
 		5242AE8F2C36085100261077 /* WebRTCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5242AE8E2C36085100261077 /* WebRTCManager.swift */; };
+		5242AE912C360A6400261077 /* SocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5242AE902C360A6400261077 /* SocketManager.swift */; };
+		526C1C6D2C36143700DF7257 /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 526C1C6C2C36143700DF7257 /* WebRTC */; };
+		526C1C702C36148F00DF7257 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 526C1C6F2C36148F00DF7257 /* Starscream */; };
 		52734B402BF2FA270077EBFA /* CameraPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52734B3F2BF2FA270077EBFA /* CameraPreviewView.swift */; };
 		527D90262C1EAAE7001226F8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527D90252C1EAAE7001226F8 /* AppDelegate.swift */; };
 		52862EB72C268C6E009F441B /* GoogleSignInButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52862EB62C268C6E009F441B /* GoogleSignInButton.swift */; };
@@ -17,10 +21,15 @@
 		529948A12BDF30E400F9947E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529948A02BDF30E400F9947E /* ContentView.swift */; };
 		529948A32BDF30E600F9947E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 529948A22BDF30E600F9947E /* Assets.xcassets */; };
 		529948A62BDF30E600F9947E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 529948A52BDF30E600F9947E /* Preview Assets.xcassets */; };
+		52A0E6552C374EC2004C9F46 /* SignalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A0E6542C374EC2004C9F46 /* SignalManager.swift */; };
+		52A0E6572C374EFF004C9F46 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A0E6562C374EFF004C9F46 /* Message.swift */; };
+		52A0E6592C374F45004C9F46 /* StateManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A0E6582C374F45004C9F46 /* StateManagement.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5218B1F72C377C1000DE1322 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		5242AE8E2C36085100261077 /* WebRTCManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WebRTCManager.swift; path = "/Users/loganbell/Documents/School/Senior Project/Ai-Censored-Dating-App/BlurrrDatingApp/Startups/WebRTCManager.swift"; sourceTree = "<absolute>"; };
+		5242AE902C360A6400261077 /* SocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketManager.swift; sourceTree = "<group>"; };
 		524B0F4F2BF3250B00E1504A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		52734B3F2BF2FA270077EBFA /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreviewView.swift; sourceTree = "<group>"; };
 		527D90252C1EAAE7001226F8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -31,6 +40,9 @@
 		529948A02BDF30E400F9947E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		529948A22BDF30E600F9947E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		529948A52BDF30E600F9947E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		52A0E6542C374EC2004C9F46 /* SignalManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalManager.swift; sourceTree = "<group>"; };
+		52A0E6562C374EFF004C9F46 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		52A0E6582C374F45004C9F46 /* StateManagement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateManagement.swift; sourceTree = "<group>"; };
 		68CB59C7E01B910E007A22B7 /* Pods_BlurrrDatingApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BlurrrDatingApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8477422C06B8BC1ADD036D5D /* Pods-BlurrrDatingApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlurrrDatingApp.release.xcconfig"; path = "Target Support Files/Pods-BlurrrDatingApp/Pods-BlurrrDatingApp.release.xcconfig"; sourceTree = "<group>"; };
 		BD33D066767E57EB7B9AA1FD /* Pods-BlurrrDatingApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlurrrDatingApp.debug.xcconfig"; path = "Target Support Files/Pods-BlurrrDatingApp/Pods-BlurrrDatingApp.debug.xcconfig"; sourceTree = "<group>"; };
@@ -42,6 +54,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				2EE0D8B0C28504EAE963FC57 /* Pods_BlurrrDatingApp.framework in Frameworks */,
+				526C1C6D2C36143700DF7257 /* WebRTC in Frameworks */,
+				526C1C702C36148F00DF7257 /* Starscream in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,8 +75,20 @@
 			children = (
 				5299489E2BDF30E400F9947E /* BlurrrDatingAppApp.swift */,
 				527D90252C1EAAE7001226F8 /* AppDelegate.swift */,
+				52A0E6582C374F45004C9F46 /* StateManagement.swift */,
 			);
 			path = Startups;
+			sourceTree = "<group>";
+		};
+		526C1C6A2C36138100DF7257 /* SocketManagement */ = {
+			isa = PBXGroup;
+			children = (
+				52A0E6542C374EC2004C9F46 /* SignalManager.swift */,
+				52A0E6562C374EFF004C9F46 /* Message.swift */,
+				5242AE8E2C36085100261077 /* WebRTCManager.swift */,
+				5242AE902C360A6400261077 /* SocketManager.swift */,
+			);
+			path = SocketManagement;
 			sourceTree = "<group>";
 		};
 		529948922BDF30E400F9947E = {
@@ -87,12 +113,13 @@
 			isa = PBXGroup;
 			children = (
 				524B0F4F2BF3250B00E1504A /* Info.plist */,
-				5242AE8D2C35FF3A00261077 /* Startups */,
-				52734B3F2BF2FA270077EBFA /* CameraPreviewView.swift */,
 				529948A02BDF30E400F9947E /* ContentView.swift */,
+				5218B1F72C377C1000DE1322 /* MainViewController.swift */,
+				52734B3F2BF2FA270077EBFA /* CameraPreviewView.swift */,
 				52862EB62C268C6E009F441B /* GoogleSignInButton.swift */,
 				528C247F2C1543280012C163 /* VideoCallView.swift */,
-				5242AE8E2C36085100261077 /* WebRTCManager.swift */,
+				5242AE8D2C35FF3A00261077 /* Startups */,
+				526C1C6A2C36138100DF7257 /* SocketManagement */,
 				529948A22BDF30E600F9947E /* Assets.xcassets */,
 				529948A42BDF30E600F9947E /* Preview Content */,
 			);
@@ -135,6 +162,8 @@
 			);
 			name = BlurrrDatingApp;
 			packageProductDependencies = (
+				526C1C6C2C36143700DF7257 /* WebRTC */,
+				526C1C6F2C36148F00DF7257 /* Starscream */,
 			);
 			productName = BlurrrDatingApp;
 			productReference = 5299489B2BDF30E400F9947E /* BlurrrDatingApp.app */;
@@ -165,6 +194,8 @@
 			);
 			mainGroup = 529948922BDF30E400F9947E;
 			packageReferences = (
+				526C1C6B2C36143700DF7257 /* XCRemoteSwiftPackageReference "WebRTC" */,
+				526C1C6E2C36148F00DF7257 /* XCRemoteSwiftPackageReference "Starscream" */,
 			);
 			productRefGroup = 5299489C2BDF30E400F9947E /* Products */;
 			projectDirPath = "";
@@ -234,11 +265,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52A0E6592C374F45004C9F46 /* StateManagement.swift in Sources */,
+				5218B1F82C377C1000DE1322 /* MainViewController.swift in Sources */,
 				52862EB72C268C6E009F441B /* GoogleSignInButton.swift in Sources */,
 				528C24802C1543280012C163 /* VideoCallView.swift in Sources */,
+				5242AE912C360A6400261077 /* SocketManager.swift in Sources */,
 				529948A12BDF30E400F9947E /* ContentView.swift in Sources */,
 				5299489F2BDF30E400F9947E /* BlurrrDatingAppApp.swift in Sources */,
+				52A0E6552C374EC2004C9F46 /* SignalManager.swift in Sources */,
 				5242AE8F2C36085100261077 /* WebRTCManager.swift in Sources */,
+				52A0E6572C374EFF004C9F46 /* Message.swift in Sources */,
 				527D90262C1EAAE7001226F8 /* AppDelegate.swift in Sources */,
 				52734B402BF2FA270077EBFA /* CameraPreviewView.swift in Sources */,
 			);
@@ -458,6 +494,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		526C1C6B2C36143700DF7257 /* XCRemoteSwiftPackageReference "WebRTC" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stasel/WebRTC/";
+			requirement = {
+				kind = exactVersion;
+				version = 125.0.0;
+			};
+		};
+		526C1C6E2C36148F00DF7257 /* XCRemoteSwiftPackageReference "Starscream" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/daltoniam/Starscream";
+			requirement = {
+				kind = exactVersion;
+				version = 4.0.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		526C1C6C2C36143700DF7257 /* WebRTC */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 526C1C6B2C36143700DF7257 /* XCRemoteSwiftPackageReference "WebRTC" */;
+			productName = WebRTC;
+		};
+		526C1C6F2C36148F00DF7257 /* Starscream */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 526C1C6E2C36148F00DF7257 /* XCRemoteSwiftPackageReference "Starscream" */;
+			productName = Starscream;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 529948932BDF30E400F9947E /* Project object */;
 }

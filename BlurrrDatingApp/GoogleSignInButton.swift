@@ -10,7 +10,7 @@ struct LoginView: View {
 
     var body: some View {
         VStack {
-            Text("Please sign in to continue")
+            Text("Simply Login To Begin Greatness-")
             signInButton
                 .frame(width: 200, height: 50)
                 .padding()
@@ -21,9 +21,9 @@ struct LoginView: View {
         Button(action: {
             signInWithGoogle()
         }) {
-            Text("Sign In with Google")
+            Text(isUserSignedIn ? "Joining..." : "Sign In with Google")
                 .padding()
-                .background(Color.darkTeal)
+                .background(LinearGradient(gradient: Gradient(colors: [Color.darkTeal, Color.darkTeal1]), startPoint: .leading, endPoint: .trailing))
                 .foregroundColor(.white)
                 .cornerRadius(8)
         }
@@ -38,14 +38,14 @@ struct LoginView: View {
             return
         }
 
-        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { result, error in
+        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { signInResult, error in
             if let error = error {
                 print(error.localizedDescription)
                 return
             }
 
-            guard let user = result?.user else { return }
-
+            guard let signInResult = signInResult else { return }
+            let user = signInResult.user
             displayName = user.profile?.name ?? ""
             email = user.profile?.email ?? ""
             avatarURL = user.profile?.imageURL(withDimension: 100) ?? URL(string: "https://example.com/default-avatar.png")!
