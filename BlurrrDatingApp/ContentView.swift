@@ -2,29 +2,23 @@ import SwiftUI
 import WebRTC
 import AVFoundation
 
-
 struct ContentView: View {
-    // Google sign-in info
-    @State private var isUserSignedIn: Bool = false
+    @State private var isUserSignedIn: Bool = true
     @State private var displayName: String = ""
     @State private var email: String = ""
     @State private var avatarURL: URL = URL(string: "https://example.com/default-avatar.png")!
     @State private var idToken: String = ""
-    
-    // Blurring state
     @State private var isBlurred: Bool = false
-    // Button clicked
     @State private var isLoading: Bool = false
-    // Video stream states
     @State private var isLocalVideoActive: Bool = false
     @State private var isRemoteVideoActive: Bool = false
-    // WebRTC states
     @State private var signalingConnected: Bool = false
     @State private var hasLocalSdp: Bool = false
     @State private var localCandidateCount: Int = 0
     @State private var hasRemoteSdp: Bool = false
     @State private var remoteCandidateCount: Int = 0
-    
+    @State private var pairMessage: String = "Waiting for a pair"
+
     var signalingHandler: SignalingHandler
     var webRTCHandler: WebRTCHandler
 
@@ -34,7 +28,7 @@ struct ContentView: View {
         self.webRTCHandler.delegate = self
         self.signalingHandler.delegate = self
     }
-    
+
     var body: some View {
         NavigationView {
             if !isUserSignedIn {
@@ -53,26 +47,19 @@ struct ContentView: View {
                     Text("Hello, \(displayName)")
                         .padding()
 
-                    Button(action: sendOffer) {
-                        Text(isLoading ? "Joining..." : "Send Offer")
-                            .padding()
-                            .background(isLoading ? Color.gray : Color.teal)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                    }
-                    .padding()
-                   // .disabled(isLoading)
+                    Text(pairMessage)
+                        .padding()
 
-                    Button(action: sendAnswer) {
-                        Text(isLoading ? "Joining..." : "Send Answer")
+                    Button(action: pairUsers) {
+                        Text(isLoading ? "Pairing..." : "Pair Users")
                             .padding()
                             .background(isLoading ? Color.gray : Color.teal)
                             .foregroundColor(.white)
                             .cornerRadius(8)
                     }
                     .padding()
-                    //.disabled(isLoading)
-                    
+                    .disabled(isLoading)
+
                     NavigationLink(destination: VideoView(webRTCHandler: webRTCHandler)) {
                         Text("Go to Video View")
                             .padding()
@@ -96,22 +83,10 @@ struct ContentView: View {
         .navigationViewStyle(StackNavigationViewStyle())
     }
 
-    private func sendOffer() {
-        print("sendOffer called")
+    private func pairUsers() {
         isLoading = true
         webRTCHandler.offer { sdp in
             signalingHandler.send(sdp: sdp)
-            isLoading = false
-            hasLocalSdp = true
-        }
-    }
-
-    private func sendAnswer() {
-        print("sendAnswer called")
-        isLoading = true
-        webRTCHandler.answer { sdp in
-            signalingHandler.send(sdp: sdp)
-            isLoading = false
             hasLocalSdp = true
         }
     }
@@ -122,7 +97,7 @@ extension ContentView: WebRTCManager {
         signalingHandler.send(candidate: candidate)
         localCandidateCount += 1
     }
-    
+
     func webRTCHandler(_ client: WebRTCHandler, didChangeConnectionState state: RTCIceConnectionState) {
         DispatchQueue.main.async {
             switch state {
@@ -137,7 +112,7 @@ extension ContentView: WebRTCManager {
             }
         }
     }
-    
+
     func webRTCHandler(_ client: WebRTCHandler, didReceiveData data: Data) {
         let message = String(data: data, encoding: .utf8) ?? "(Binary: \(data.count) bytes)"
         // Handle received data
@@ -150,7 +125,7 @@ extension ContentView: SignalManager {
             self.signalingConnected = true
         }
     }
-    
+
     func signalClientDidDisconnect(_ signalingHandler: SignalingHandler) {
         DispatchQueue.main.async {
             self.signalingConnected = false
@@ -160,23 +135,46 @@ extension ContentView: SignalManager {
             self.signalingHandler.connect()
         }
     }
-    
+
     func signalClient(_ signalingHandler: SignalingHandler, didReceiveRemoteSdp sdp: RTCSessionDescription) {
         webRTCHandler.set(remoteSdp: sdp) { error in
             if error == nil {
                 DispatchQueue.main.async {
                     self.hasRemoteSdp = true
                 }
+                webRTCHandler.answer { sdp in
+                    signalingHandler.send(sdp: sdp)
+                    hasLocalSdp = true
+                }
             }
         }
     }
-    
+
     func signalClient(_ signalingHandler: SignalingHandler, didReceiveCandidate candidate: RTCIceCandidate) {
         webRTCHandler.set(remoteCandidate: candidate) { error in
             if error == nil {
                 DispatchQueue.main.async {
                     self.remoteCandidateCount += 1
                 }
+            }
+        }
+    }
+
+    func signalClient(_ signalingHandler: SignalingHandler, didReceiveMessage message: String) {
+        DispatchQueue.main.async {
+            if message.contains("Paired with another client") {
+                self.pairMessage = "Paired with another client"
+                self.isLoading = false
+            } else if message.contains("Waiting for a pair") {
+                self.pairMessage = "Waiting for a pair"
+                self.isLoading = false
+            } else if message.contains("opened data channel") {
+                self.pairMessage = "opened data channel"
+                self.isLoading = false
+            } else if message.contains("Your pair has disconnected") {
+                self.pairMessage = "Your pair has disconnected"
+                self.isLocalVideoActive = false
+                self.isRemoteVideoActive = false
             }
         }
     }
