@@ -10,6 +10,7 @@
 		2EE0D8B0C28504EAE963FC57 /* Pods_BlurrrDatingApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68CB59C7E01B910E007A22B7 /* Pods_BlurrrDatingApp.framework */; };
 		5242AE8F2C36085100261077 /* WebRTCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5242AE8E2C36085100261077 /* WebRTCManager.swift */; };
 		5242AE912C360A6400261077 /* SocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5242AE902C360A6400261077 /* SocketManager.swift */; };
+		52683AFC2C3FB4E1006F7A8C /* app.js in Resources */ = {isa = PBXBuildFile; fileRef = 52683AFB2C3FB4E1006F7A8C /* app.js */; };
 		526C1C6D2C36143700DF7257 /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 526C1C6C2C36143700DF7257 /* WebRTC */; };
 		526C1C702C36148F00DF7257 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 526C1C6F2C36148F00DF7257 /* Starscream */; };
 		52734B402BF2FA270077EBFA /* CameraPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52734B3F2BF2FA270077EBFA /* CameraPreviewView.swift */; };
@@ -28,6 +29,7 @@
 		5242AE8E2C36085100261077 /* WebRTCManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WebRTCManager.swift; path = "/Users/loganbell/Documents/School/Senior Project/Ai-Censored-Dating-App/BlurrrDatingApp/Startups/WebRTCManager.swift"; sourceTree = "<absolute>"; };
 		5242AE902C360A6400261077 /* SocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketManager.swift; sourceTree = "<group>"; };
 		524B0F4F2BF3250B00E1504A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		52683AFB2C3FB4E1006F7A8C /* app.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = app.js; sourceTree = "<group>"; };
 		52734B3F2BF2FA270077EBFA /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreviewView.swift; sourceTree = "<group>"; };
 		52862EB62C268C6E009F441B /* GoogleSignInButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInButton.swift; sourceTree = "<group>"; };
 		528C247F2C1543280012C163 /* VideoCallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCallView.swift; sourceTree = "<group>"; };
@@ -75,6 +77,14 @@
 			path = Startups;
 			sourceTree = "<group>";
 		};
+		52683AFA2C3FB48D006F7A8C /* Server */ = {
+			isa = PBXGroup;
+			children = (
+				52683AFB2C3FB4E1006F7A8C /* app.js */,
+			);
+			path = Server;
+			sourceTree = "<group>";
+		};
 		526C1C6A2C36138100DF7257 /* SocketManagement */ = {
 			isa = PBXGroup;
 			children = (
@@ -89,6 +99,7 @@
 		529948922BDF30E400F9947E = {
 			isa = PBXGroup;
 			children = (
+				52683AFA2C3FB48D006F7A8C /* Server */,
 				5299489D2BDF30E400F9947E /* BlurrrDatingApp */,
 				5299489C2BDF30E400F9947E /* Products */,
 				6A5206B700545DC2E4410FE9 /* Pods */,
@@ -205,6 +216,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52683AFC2C3FB4E1006F7A8C /* app.js in Resources */,
 				529948A62BDF30E600F9947E /* Preview Assets.xcassets in Resources */,
 				529948A32BDF30E600F9947E /* Assets.xcassets in Resources */,
 			);
