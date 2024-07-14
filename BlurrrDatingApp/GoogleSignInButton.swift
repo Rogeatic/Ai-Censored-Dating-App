@@ -11,15 +11,9 @@ struct LoginView: View {
     var body: some View {
         VStack {
             Text("Simply Login To Begin Greatness-")
-            if isUserSignedIn {
-                SpinnerView()
-                    .frame(width: 50, height: 50)
-                    .padding()
-            } else {
-                signInButton
-                    .frame(width: 200, height: 50)
-                    .padding()
-            }
+            signInButton
+                .frame(width: 200, height: 50)
+                .padding()
         }
     }
 
@@ -52,6 +46,7 @@ struct LoginView: View {
 
             guard let signInResult = signInResult else { return }
             let user = signInResult.user
+
             displayName = user.profile?.name ?? ""
             email = user.profile?.email ?? ""
             avatarURL = user.profile?.imageURL(withDimension: 100) ?? URL(string: "https://example.com/default-avatar.png")!
@@ -65,20 +60,6 @@ struct LoginView: View {
             UserDefaults.standard.set(avatarURL.absoluteString, forKey: "avatarURL")
             UserDefaults.standard.set(idToken, forKey: "idToken")
         }
-    }
-}
-
-struct SpinnerView: View {
-    @State private var isAnimating: Bool = false
-
-    var body: some View {
-        Text("B")
-            .font(.largeTitle)
-            .rotationEffect(Angle(degrees: isAnimating ? 360 : 0))
-            .animation(Animation.linear(duration: 1).repeatForever(autoreverses: false))
-            .onAppear {
-                self.isAnimating = true
-            }
     }
 }
 

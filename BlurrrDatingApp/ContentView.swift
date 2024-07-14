@@ -14,6 +14,7 @@ struct ContentView: View {
     @State private var idToken: String = UserDefaults.standard.string(forKey: "idToken") ?? ""
     @State private var isBlurred: Bool = false
     @State private var showUserPopover: Bool = false
+    @State private var isLoading: Bool = true
     
     var signalingHandler: SignalingHandler
     var webRTCHandler: WebRTCHandler
@@ -48,8 +49,9 @@ struct ContentView: View {
                                             .frame(width: 40, height: 40)
                                             .clipShape(Circle())
                                     } else {
-                                        ProgressView()
-                                            .frame(width: 40, height: 40)
+                                        // Loading wheel over icon
+                                        //ProgressView()
+                                        //    .frame(width: 40, height: 40)
                                     }
                                 }
                             }
@@ -124,26 +126,31 @@ struct ContentView: View {
                     Spacer() // Add a spacer to push the content towards the center
 
                     VStack {
-                        CameraPreviewView(isBlurred: $isBlurred, videoTrack: webRTCHandler.localVideoTrack)
-                            .cornerRadius(15)
-                            .frame(height: UIScreen.main.bounds.size.height * 0.50)
-                            .padding()
-                            .blur(radius: isBlurred ? 100 : 0)
-                            .background(isBlurred ? AnyView(LinearGradient(gradient: Gradient(colors: [Color.darkTeal, Color.darkTeal1]), startPoint: .topLeading, endPoint: .bottomTrailing)) : AnyView(Color.clear))
-                            .animation(.easeInOut, value: isBlurred)
-                            .cornerRadius(15)
-                            .padding(.bottom, 10)
-                        
-                        Text("Hello, \(displayName)")
-
-                        NavigationLink(destination: VideoView(signalingHandler: signalingHandler, webRTCHandler: webRTCHandler)) {
-                            Text("Go to Video View")
+                        if isLoading {
+                            ProgressView("Preparing Ai")
                                 .padding()
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .cornerRadius(8)
+                        } else {
+                            CameraPreviewView(isBlurred: $isBlurred, videoTrack: webRTCHandler.localVideoTrack)
+                                .cornerRadius(15)
+                                .frame(height: UIScreen.main.bounds.size.height * 0.50)
+                                .padding()
+                                .blur(radius: isBlurred ? 100 : 0)
+                                .background(isBlurred ? AnyView(LinearGradient(gradient: Gradient(colors: [Color.darkTeal, Color.darkTeal1]), startPoint: .topLeading, endPoint: .bottomTrailing)) : AnyView(Color.clear))
+                                .animation(.easeInOut, value: isBlurred)
+                                .cornerRadius(15)
+                                .padding(.bottom, 10)
+                            
+                            Text("Hello, \(displayName)")
+
+                            NavigationLink(destination: VideoView(signalingHandler: signalingHandler, webRTCHandler: webRTCHandler)) {
+                                Text("Go to Video View")
+                                    .padding()
+                                    .background(Color.blue)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(8)
+                            }
+                            .padding()
                         }
-                        .padding()
                     }
                     
                     Spacer() // Add another spacer here to center the content vertically
@@ -153,9 +160,20 @@ struct ContentView: View {
                 .onTapGesture {
                     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                 }
+                .onAppear {
+                    DispatchQueue.global(qos: .userInitiated).async {
+                        DispatchQueue.main.async {
+                            isLoading = false
+                        }
+                    }
+                }
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
+    }
+    
+    private func loadCameraPreview() {
+        
     }
     
     private func signOut() {
