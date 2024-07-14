@@ -57,6 +57,13 @@ struct LoginView: View {
             avatarURL = user.profile?.imageURL(withDimension: 100) ?? URL(string: "https://example.com/default-avatar.png")!
             idToken = user.idToken?.tokenString ?? ""
             isUserSignedIn = true
+            
+            // Save user details in UserDefaults
+            UserDefaults.standard.set(isUserSignedIn, forKey: "isUserSignedIn")
+            UserDefaults.standard.set(displayName, forKey: "displayName")
+            UserDefaults.standard.set(email, forKey: "email")
+            UserDefaults.standard.set(avatarURL.absoluteString, forKey: "avatarURL")
+            UserDefaults.standard.set(idToken, forKey: "idToken")
         }
     }
 }

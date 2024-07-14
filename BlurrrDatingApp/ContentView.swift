@@ -1,11 +1,17 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var isUserSignedIn: Bool = false
-    @State private var displayName: String = ""
-    @State private var email: String = ""
-    @State private var avatarURL: URL = URL(string: "https://example.com/default-avatar.png")!
-    @State private var idToken: String = ""
+    @State private var isUserSignedIn: Bool = UserDefaults.standard.bool(forKey: "isUserSignedIn")
+    @State private var displayName: String = UserDefaults.standard.string(forKey: "displayName") ?? ""
+    @State private var email: String = UserDefaults.standard.string(forKey: "email") ?? ""
+    @State private var avatarURL: URL = {
+        if let urlString = UserDefaults.standard.string(forKey: "avatarURL"),
+           let url = URL(string: urlString) {
+            return url
+        }
+        return URL(string: "https://example.com/default-avatar.png")!
+    }()
+    @State private var idToken: String = UserDefaults.standard.string(forKey: "idToken") ?? ""
     @State private var isBlurred: Bool = false
     @State private var showUserPopover: Bool = false
     
@@ -78,8 +84,7 @@ struct ContentView: View {
                                     
                                     Button(action: {
                                         // Sign out action
-                                        isUserSignedIn = false
-                                        showUserPopover = false
+                                        signOut()
                                     }) {
                                         Text("Sign Out")
                                             .foregroundColor(.red)
@@ -151,5 +156,17 @@ struct ContentView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
+    }
+    
+    private func signOut() {
+        isUserSignedIn = false
+        showUserPopover = false
+        
+        // Clear user defaults
+        UserDefaults.standard.set(false, forKey: "isUserSignedIn")
+        UserDefaults.standard.set(nil, forKey: "displayName")
+        UserDefaults.standard.set(nil, forKey: "email")
+        UserDefaults.standard.set(nil, forKey: "avatarURL")
+        UserDefaults.standard.set(nil, forKey: "idToken")
     }
 }
