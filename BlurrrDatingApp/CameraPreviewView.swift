@@ -3,26 +3,22 @@ import AVFoundation
 import CoreML
 import Vision
 import NSFWDetector
-import WebRTC
 
 struct CameraPreviewView: UIViewRepresentable {
     @Binding var isBlurred: Bool
-    var videoTrack: RTCVideoTrack?
 
-    class CameraPreviewLayer: UIView, AVCaptureVideoDataOutputSampleBufferDelegate, RTCVideoRenderer {
+    class CameraPreviewLayer: UIView, AVCaptureVideoDataOutputSampleBufferDelegate {
         var captureSession: AVCaptureSession
         var previewLayer: AVCaptureVideoPreviewLayer
         var nsfwDetector = NSFWDetector.shared
         @Binding var isBlurred: Bool
-        var videoTrack: RTCVideoTrack?
         
         private var blurTimer: Timer?
 
-        init(session: AVCaptureSession, isBlurred: Binding<Bool>, videoTrack: RTCVideoTrack?) {
+        init(session: AVCaptureSession, isBlurred: Binding<Bool>) {
             self.captureSession = session
             self.previewLayer = AVCaptureVideoPreviewLayer(session: session)
             self._isBlurred = isBlurred
-            self.videoTrack = videoTrack
             
             super.init(frame: .zero)
             
@@ -30,7 +26,6 @@ struct CameraPreviewView: UIViewRepresentable {
             layer.addSublayer(previewLayer)
             
             setupVideoOutput()
-            videoTrack?.add(self)
         }
         
         required init?(coder: NSCoder) {
@@ -106,37 +101,6 @@ struct CameraPreviewView: UIViewRepresentable {
                 }
             }
         }
-        
-        // RTCVideoRenderer methods
-        func setSize(_ size: CGSize) {
-            DispatchQueue.main.async {
-                self.previewLayer.frame = CGRect(origin: .zero, size: size)
-            }
-        }
-        
-        func renderFrame(_ frame: RTCVideoFrame?) {
-            guard let pixelBuffer = frame?.buffer as? RTCCVPixelBuffer else { return }
-            let ciImage = CIImage(cvPixelBuffer: pixelBuffer.pixelBuffer)
-            let context = CIContext()
-            guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return }
-            let uiImage = UIImage(cgImage: cgImage)
-            
-            // Check the image for NSFW content
-            nsfwDetector.check(image: uiImage, completion: { result in
-                switch result {
-                case let .success(nsfwConfidence: confidence):
-                    DispatchQueue.main.async {
-                        if confidence > 0.72 {
-                            self.applyCensoring()
-                        } else {
-                            self.scheduleRemoveCensoring()
-                        }
-                    }
-                default:
-                    break
-                }
-            })
-        }
     }
     
     func makeUIView(context: Context) -> CameraPreviewLayer {
@@ -144,7 +108,7 @@ struct CameraPreviewView: UIViewRepresentable {
         session.sessionPreset = .high
         
         guard let frontCamera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) else {
-            return CameraPreviewLayer(session: session, isBlurred: $isBlurred, videoTrack: videoTrack)
+            return CameraPreviewLayer(session: session, isBlurred: $isBlurred)
         }
         
         DispatchQueue.global(qos: .userInitiated).async {
@@ -160,7 +124,7 @@ struct CameraPreviewView: UIViewRepresentable {
             }
         }
         
-        return CameraPreviewLayer(session: session, isBlurred: $isBlurred, videoTrack: videoTrack)
+        return CameraPreviewLayer(session: session, isBlurred: $isBlurred)
     }
     
     func updateUIView(_ uiView: CameraPreviewLayer, context: Context) {
@@ -169,6 +133,5 @@ struct CameraPreviewView: UIViewRepresentable {
     
     static func dismantleUIView(_ uiView: CameraPreviewLayer, coordinator: ()) {
         uiView.captureSession.stopRunning()
-        uiView.videoTrack?.remove(uiView)
     }
 }

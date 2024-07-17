@@ -130,7 +130,7 @@ struct ContentView: View {
                             ProgressView("Preparing Ai")
                                 .padding()
                         } else {
-                            CameraPreviewView(isBlurred: $isBlurred, videoTrack: webRTCHandler.localVideoTrack)
+                            CameraPreviewView(isBlurred: $isBlurred)
                                 .cornerRadius(15)
                                 .frame(height: UIScreen.main.bounds.size.height * 0.50)
                                 .padding()
