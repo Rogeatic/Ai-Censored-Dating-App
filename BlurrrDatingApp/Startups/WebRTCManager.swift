@@ -23,7 +23,7 @@ final class WebRTCHandler: NSObject {
                                    kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueTrue]
     private var videoCapturer: RTCVideoCapturer?
     public var localVideoTrack: RTCVideoTrack?
-    private var remoteVideoTrack: RTCVideoTrack?
+    public var remoteVideoTrack: RTCVideoTrack?
     private var localDataChannel: RTCDataChannel?
     private var remoteDataChannel: RTCDataChannel?
 

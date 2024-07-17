@@ -28,7 +28,7 @@ struct VideoView: View {
 
     var body: some View {
         ZStack {
-            RemoteVideoView(webRTCHandler: webRTCHandler)
+            RemoteVideoView(webRTCHandler: webRTCHandler, isBlurred: $isBlurred)
                 .edgesIgnoringSafeArea(.all)
             VStack {
                 Spacer()
@@ -167,15 +167,80 @@ struct LocalVideoView: UIViewRepresentable {
     func updateUIView(_ uiView: UIView, context: Context) {}
 }
 
+// RemoteVideoView with NSFW detection and blurring integrated
 struct RemoteVideoView: UIViewRepresentable {
     var webRTCHandler: WebRTCHandler
+    @Binding var isBlurred: Bool
     
+    class Coordinator: NSObject, RTCVideoRenderer {
+        var parent: RemoteVideoView
+        var nsfwDetector = NSFWDetector.shared
+        private var blurTimer: Timer?
+
+        init(parent: RemoteVideoView) {
+            self.parent = parent
+        }
+
+        func setSize(_ size: CGSize) {}
+
+        func renderFrame(_ frame: RTCVideoFrame?) {
+            guard let buffer = frame?.buffer as? RTCCVPixelBuffer else { return }
+            let pixelBuffer = buffer.pixelBuffer
+            
+            // Convert the pixel buffer to a UIImage
+            let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+            let context = CIContext()
+            guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return }
+            let uiImage = UIImage(cgImage: cgImage)
+            
+            // Check the image for NSFW content
+            nsfwDetector.check(image: uiImage, completion: { result in
+                switch result {
+                case let .success(nsfwConfidence: confidence):
+                    DispatchQueue.main.async {
+                        if confidence > 0.72 {
+                            self.applyCensoring()
+                        } else {
+                            self.scheduleRemoveCensoring()
+                        }
+                    }
+                default:
+                    break
+                }
+            })
+        }
+
+        func applyCensoring() {
+            blurTimer?.invalidate()
+            parent.isBlurred = true
+            blurTimer = nil
+        }
+
+        func scheduleRemoveCensoring() {
+            if blurTimer == nil {
+                blurTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in
+                    self.parent.isBlurred = false
+                    self.blurTimer = nil
+                }
+            }
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        return Coordinator(parent: self)
+    }
+
     func makeUIView(context: Context) -> UIView {
         let remoteRenderer = RTCMTLVideoView(frame: .zero)
         remoteRenderer.videoContentMode = .scaleAspectFill
         webRTCHandler.renderRemoteVideo(to: remoteRenderer)
+        webRTCHandler.remoteVideoTrack?.add(context.coordinator)
         return remoteRenderer
     }
-    
+
     func updateUIView(_ uiView: UIView, context: Context) {}
+
+    static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
+        coordinator.parent.webRTCHandler.remoteVideoTrack?.remove(coordinator)
+    }
 }
