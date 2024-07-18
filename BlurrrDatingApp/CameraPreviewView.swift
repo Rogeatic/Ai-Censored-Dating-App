@@ -86,7 +86,6 @@ struct CameraPreviewView: UIViewRepresentable {
                         } else {
                             self.scheduleRemoveCensoring()
                         }
-                        //print("Checked Confidence: \(confidence)")
                     }
                 default:
                     break
@@ -105,6 +104,22 @@ struct CameraPreviewView: UIViewRepresentable {
                 blurTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in
                     self.isBlurred = false
                     self.blurTimer = nil
+                }
+            }
+        }
+        
+        @objc func startSession() {
+            DispatchQueue.global(qos: .background).async {
+                if !self.captureSession.isRunning {
+                    self.captureSession.startRunning()
+                }
+            }
+        }
+        
+        @objc func stopSession() {
+            DispatchQueue.global(qos: .background).async {
+                if self.captureSession.isRunning {
+                    self.captureSession.stopRunning()
                 }
             }
         }
@@ -131,7 +146,12 @@ struct CameraPreviewView: UIViewRepresentable {
             }
         }
         
-        return CameraPreviewLayer(session: session, isBlurred: $isBlurred)
+        let cameraLayer = CameraPreviewLayer(session: session, isBlurred: $isBlurred)
+        
+        NotificationCenter.default.addObserver(cameraLayer, selector: #selector(cameraLayer.startSession), name: Notification.Name("startCameraSession"), object: nil)
+        NotificationCenter.default.addObserver(cameraLayer, selector: #selector(cameraLayer.stopSession), name: Notification.Name("stopCameraSession"), object: nil)
+        
+        return cameraLayer
     }
     
     func updateUIView(_ uiView: CameraPreviewLayer, context: Context) {
@@ -139,6 +159,6 @@ struct CameraPreviewView: UIViewRepresentable {
     }
     
     static func dismantleUIView(_ uiView: CameraPreviewLayer, coordinator: ()) {
-        uiView.captureSession.stopRunning()
+        uiView.stopSession()
     }
 }

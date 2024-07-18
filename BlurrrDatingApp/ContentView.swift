@@ -142,7 +142,8 @@ struct ContentView: View {
 
                             Text("Hello, \(displayName)")
 
-                            NavigationLink(destination: VideoView(signalingHandler: signalingHandler, webRTCHandler: webRTCHandler)) {                        Text("Go to Video View")
+                            NavigationLink(destination: VideoView(signalingHandler: signalingHandler, webRTCHandler: webRTCHandler)) {
+                                Text("Go to Video View")
                                     .padding()
                                     .background(Color.blue)
                                     .foregroundColor(.white)
@@ -166,13 +167,17 @@ struct ContentView: View {
                         }
                     }
                 }
+                .onAppear {
+                    // Start camera session when view appears
+                    NotificationCenter.default.post(name: Notification.Name("startCameraSession"), object: nil)
+                }
+                .onDisappear {
+                    // Stop camera session when view disappears
+                    NotificationCenter.default.post(name: Notification.Name("stopCameraSession"), object: nil)
+                }
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
-    }
-
-    private func loadCameraPreview() {
-
     }
 
     private func signOut() {
