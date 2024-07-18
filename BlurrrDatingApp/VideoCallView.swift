@@ -6,14 +6,12 @@ import NSFWDetector
 
 struct VideoView: View {
     @State private var isBlurred: Bool = false
-    @State private var isLocalVideoActive: Bool = false
     @State private var isRemoteVideoActive: Bool = false
     @State private var signalingConnected: Bool = false
     @State private var hasLocalSdp: Bool = false
     @State private var localCandidateCount: Int = 0
     @State private var hasRemoteSdp: Bool = false
     @State private var remoteCandidateCount: Int = 0
-    @State private var pairMessage: String = "Waiting for a pair"
 
     var signalingHandler: SignalingHandler
     var webRTCHandler: WebRTCHandler
@@ -79,10 +77,11 @@ extension VideoView: WebRTCManager {
         DispatchQueue.main.async {
             switch state {
             case .connected, .completed:
-                self.isLocalVideoActive = true
+                debugPrint("CONNECTED YAY")
                 self.isRemoteVideoActive = true
             case .disconnected, .failed, .closed:
-                self.isLocalVideoActive = false
+                debugPrint("DISCONNECTED")
+                disconnect()
                 self.isRemoteVideoActive = false
             default:
                 break
@@ -133,25 +132,6 @@ extension VideoView: SignalManager {
                 DispatchQueue.main.async {
                     self.remoteCandidateCount += 1
                 }
-            }
-        }
-    }
-
-    func signalClient(_ signalingHandler: SignalingHandler, didReceiveMessage message: String) {
-        DispatchQueue.main.async {
-            if message.contains("signaling") {
-                print("SUCCESS")
-            }
-            if message.contains("Paired with another client") {
-                self.pairMessage = "Paired with another client"
-            } else if message.contains("Waiting for a pair") {
-                self.pairMessage = "Waiting for a pair"
-            } else if message.contains("opened data channel") {
-                self.pairMessage = "opened data channel"
-            } else if message.contains("Your pair has disconnected") {
-                self.pairMessage = "Your pair has disconnected"
-                self.isLocalVideoActive = false
-                self.isRemoteVideoActive = false
             }
         }
     }
