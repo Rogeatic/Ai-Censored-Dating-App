@@ -4,6 +4,7 @@ import Starscream
 protocol WebSocketHandler: AnyObject {
     var delegate: WebSocketManager? { get set }
     func connect()
+    func disconnect()
     func send(data: Data)
 }
 
@@ -26,6 +27,9 @@ class StarscreamWebSocket: WebSocketHandler {
     
     func connect() {
         self.socket.connect()
+    }
+    func disconnect() {
+        self.socket.disconnect()
     }
     
     func send(data: Data) {

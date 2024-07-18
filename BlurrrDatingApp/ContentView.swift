@@ -15,7 +15,7 @@ struct ContentView: View {
     @State private var isBlurred: Bool = false
     @State private var showUserPopover: Bool = false
     @State private var isLoading: Bool = true
-    
+
     var signalingHandler: SignalingHandler
     var webRTCHandler: WebRTCHandler
 
@@ -75,7 +75,7 @@ struct ContentView: View {
                                                 .frame(width: 60, height: 60) // Increased the frame size
                                         }
                                     }
-                                    
+
                                     Text(displayName)
                                         .font(.headline)
                                         .padding(.top, 5)
@@ -83,7 +83,7 @@ struct ContentView: View {
                                         .font(.subheadline)
                                         .foregroundColor(.gray)
                                         .padding(.bottom, 10) // Add some spacing below the email
-                                    
+
                                     Button(action: {
                                         // Sign out action
                                         signOut()
@@ -97,7 +97,7 @@ struct ContentView: View {
                                     }
                                     .padding(.bottom, 5)
                                     .padding(.top, 10)
-                                    
+
                                     Button(action: {
                                         // Cancel action
                                         showUserPopover = false
@@ -122,7 +122,7 @@ struct ContentView: View {
                         Spacer()
                     }
                     .padding(.top, 0) // Remove extra top padding
-                    
+
                     Spacer() // Add a spacer to push the content towards the center
 
                     VStack {
@@ -139,11 +139,10 @@ struct ContentView: View {
                                 .animation(.easeInOut, value: isBlurred)
                                 .cornerRadius(15)
                                 .padding(.bottom, 10)
-                            
+
                             Text("Hello, \(displayName)")
 
-                            NavigationLink(destination: VideoView(signalingHandler: signalingHandler, webRTCHandler: webRTCHandler)) {
-                                Text("Go to Video View")
+                            NavigationLink(destination: VideoView(signalingHandler: signalingHandler, webRTCHandler: webRTCHandler)) {                        Text("Go to Video View")
                                     .padding()
                                     .background(Color.blue)
                                     .foregroundColor(.white)
@@ -152,7 +151,7 @@ struct ContentView: View {
                             .padding()
                         }
                     }
-                    
+
                     Spacer() // Add another spacer here to center the content vertically
                 }
                 .padding()
@@ -171,15 +170,15 @@ struct ContentView: View {
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
-    
+
     private func loadCameraPreview() {
-        
+
     }
-    
+
     private func signOut() {
         isUserSignedIn = false
         showUserPopover = false
-        
+
         // Clear user defaults
         UserDefaults.standard.set(false, forKey: "isUserSignedIn")
         UserDefaults.standard.set(nil, forKey: "displayName")

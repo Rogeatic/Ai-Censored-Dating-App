@@ -6,7 +6,6 @@ import NSFWDetector
 
 struct VideoView: View {
     @State private var isBlurred: Bool = false
-    @State private var isLoading: Bool = false
     @State private var isLocalVideoActive: Bool = false
     @State private var isRemoteVideoActive: Bool = false
     @State private var signalingConnected: Bool = false
@@ -15,7 +14,7 @@ struct VideoView: View {
     @State private var hasRemoteSdp: Bool = false
     @State private var remoteCandidateCount: Int = 0
     @State private var pairMessage: String = "Waiting for a pair"
-    
+
     var signalingHandler: SignalingHandler
     var webRTCHandler: WebRTCHandler
 
@@ -29,7 +28,11 @@ struct VideoView: View {
     var body: some View {
         ZStack {
             RemoteVideoView(webRTCHandler: webRTCHandler, isBlurred: $isBlurred)
+                .blur(radius: isBlurred ? 100 : 0)
+                .background(isBlurred ? AnyView(LinearGradient(gradient: Gradient(colors: [Color.darkTeal, Color.darkTeal1]), startPoint: .topLeading, endPoint: .bottomTrailing)) : AnyView(Color.clear))
+                .animation(.easeInOut, value: isBlurred)
                 .edgesIgnoringSafeArea(.all)
+
             VStack {
                 Spacer()
                 HStack {
@@ -41,9 +44,6 @@ struct VideoView: View {
                         .padding()
                 }
             }
-            .blur(radius: isBlurred ? 100 : 0)
-            .background(isBlurred ? AnyView(LinearGradient(gradient: Gradient(colors: [Color.darkTeal, Color.darkTeal1]), startPoint: .topLeading, endPoint: .bottomTrailing)) : AnyView(Color.clear))
-            .animation(.easeInOut, value: isBlurred)
         }
         .onAppear {
             self.signalingHandler.connect()
@@ -51,14 +51,21 @@ struct VideoView: View {
                 self.pairUsers()
             }
         }
+        .onDisappear(){
+            disconnect()
+        }
     }
 
     private func pairUsers() {
-        isLoading = true
         webRTCHandler.offer { sdp in
             signalingHandler.send(sdp: sdp)
             hasLocalSdp = true
         }
+    }
+
+    private func disconnect() {
+        webRTCHandler.disconnect()
+        signalingHandler.disconnect()
     }
 }
 
@@ -132,18 +139,15 @@ extension VideoView: SignalManager {
 
     func signalClient(_ signalingHandler: SignalingHandler, didReceiveMessage message: String) {
         DispatchQueue.main.async {
-            if message.contains("signaling"){
+            if message.contains("signaling") {
                 print("SUCCESS")
             }
             if message.contains("Paired with another client") {
                 self.pairMessage = "Paired with another client"
-                self.isLoading = false
             } else if message.contains("Waiting for a pair") {
                 self.pairMessage = "Waiting for a pair"
-                self.isLoading = false
             } else if message.contains("opened data channel") {
                 self.pairMessage = "opened data channel"
-                self.isLoading = false
             } else if message.contains("Your pair has disconnected") {
                 self.pairMessage = "Your pair has disconnected"
                 self.isLocalVideoActive = false
@@ -153,29 +157,29 @@ extension VideoView: SignalManager {
     }
 }
 
-// Add definitions for LocalVideoView and RemoteVideoView
 struct LocalVideoView: UIViewRepresentable {
     var webRTCHandler: WebRTCHandler
-    
+
     func makeUIView(context: Context) -> UIView {
         let localRenderer = RTCMTLVideoView(frame: .zero)
         localRenderer.videoContentMode = .scaleAspectFill
         webRTCHandler.LocalVideo(renderer: localRenderer)
         return localRenderer
     }
-    
+
     func updateUIView(_ uiView: UIView, context: Context) {}
 }
 
-// RemoteVideoView with NSFW detection and blurring integrated
 struct RemoteVideoView: UIViewRepresentable {
     var webRTCHandler: WebRTCHandler
     @Binding var isBlurred: Bool
-    
+    var blurTimer: Timer?
+
     class Coordinator: NSObject, RTCVideoRenderer {
         var parent: RemoteVideoView
         var nsfwDetector = NSFWDetector.shared
         private var blurTimer: Timer?
+        private var processNextFrame = true
 
         init(parent: RemoteVideoView) {
             self.parent = parent
@@ -184,16 +188,19 @@ struct RemoteVideoView: UIViewRepresentable {
         func setSize(_ size: CGSize) {}
 
         func renderFrame(_ frame: RTCVideoFrame?) {
+            processNextFrame.toggle()
+            if !processNextFrame {
+                return
+            }
+
             guard let buffer = frame?.buffer as? RTCCVPixelBuffer else { return }
             let pixelBuffer = buffer.pixelBuffer
-            
-            // Convert the pixel buffer to a UIImage
+
             let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
             let context = CIContext()
             guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return }
             let uiImage = UIImage(cgImage: cgImage)
-            
-            // Check the image for NSFW content
+
             nsfwDetector.check(image: uiImage, completion: { result in
                 switch result {
                 case let .success(nsfwConfidence: confidence):

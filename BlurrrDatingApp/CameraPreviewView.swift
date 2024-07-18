@@ -14,6 +14,7 @@ struct CameraPreviewView: UIViewRepresentable {
         @Binding var isBlurred: Bool
         
         private var blurTimer: Timer?
+        private var processNextFrame = true
 
         init(session: AVCaptureSession, isBlurred: Binding<Bool>) {
             self.captureSession = session
@@ -62,6 +63,11 @@ struct CameraPreviewView: UIViewRepresentable {
         }
         
         func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+            processNextFrame.toggle()
+            if !processNextFrame {
+                return
+            }
+
             guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
             
             // Convert the pixel buffer to a UIImage
@@ -80,6 +86,7 @@ struct CameraPreviewView: UIViewRepresentable {
                         } else {
                             self.scheduleRemoveCensoring()
                         }
+                        //print("Checked Confidence: \(confidence)")
                     }
                 default:
                     break

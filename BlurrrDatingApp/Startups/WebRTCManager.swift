@@ -113,6 +113,34 @@ final class WebRTCHandler: NSObject {
     func set(remoteCandidate: RTCIceCandidate, completion: @escaping (Error?) -> ()) {
         self.peerConnection.add(remoteCandidate, completionHandler: completion)
     }
+    func disconnect() {
+        // Close the data channel
+        if let localDataChannel = self.localDataChannel {
+            localDataChannel.close()
+            self.localDataChannel = nil
+        }
+        
+        if let remoteDataChannel = self.remoteDataChannel {
+            remoteDataChannel.close()
+            self.remoteDataChannel = nil
+        }
+
+//        // Stop the video capturer
+//        if let capturer = self.videoCapturer as? RTCCameraVideoCapturer {
+//            capturer.stopCapture()
+//            self.videoCapturer = nil
+//        }
+
+        // Remove all senders
+        for sender in self.peerConnection.senders {
+            self.peerConnection.removeTrack(sender)
+        }
+
+        // Close the peer connection
+        self.peerConnection.close()
+    }
+
+
     
     func LocalVideo(renderer: RTCVideoRenderer) {
         guard let capturer = self.videoCapturer as? RTCCameraVideoCapturer else {
