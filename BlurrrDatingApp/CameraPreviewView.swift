@@ -81,7 +81,7 @@ struct CameraPreviewView: UIViewRepresentable {
                 switch result {
                 case let .success(nsfwConfidence: confidence):
                     DispatchQueue.main.async {
-                        if confidence > 0.72 {
+                        if confidence > 0.90 {
                             self.applyCensoring()
                         } else {
                             self.scheduleRemoveCensoring()

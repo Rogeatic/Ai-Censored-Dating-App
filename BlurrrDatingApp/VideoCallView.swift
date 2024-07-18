@@ -12,17 +12,18 @@ struct VideoView: View {
     @State private var localCandidateCount: Int = 0
     @State private var hasRemoteSdp: Bool = false
     @State private var remoteCandidateCount: Int = 0
-
+    @State private var timer: Timer?
+    
     var signalingHandler: SignalingHandler
     var webRTCHandler: WebRTCHandler
-
+    
     init(signalingHandler: SignalingHandler, webRTCHandler: WebRTCHandler) {
         self.signalingHandler = signalingHandler
         self.webRTCHandler = webRTCHandler
         self.webRTCHandler.delegate = self
         self.signalingHandler.delegate = self
     }
-
+    
     var body: some View {
         ZStack {
             RemoteVideoView(webRTCHandler: webRTCHandler, isBlurred: $isBlurred)
@@ -30,7 +31,7 @@ struct VideoView: View {
                 .background(isBlurred ? AnyView(LinearGradient(gradient: Gradient(colors: [Color.darkTeal, Color.darkTeal1]), startPoint: .topLeading, endPoint: .bottomTrailing)) : AnyView(Color.clear))
                 .animation(.easeInOut, value: isBlurred)
                 .edgesIgnoringSafeArea(.all)
-
+            
             VStack {
                 Spacer()
                 HStack {
@@ -45,15 +46,27 @@ struct VideoView: View {
         }
         .onAppear {
             self.signalingHandler.connect()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
-                self.pairUsers()
-            }
+            startCheckingRemoteVideo()
         }
-        .onDisappear(){
-            disconnect()
+        .onDisappear {
+            stopCheckingRemoteVideo()
         }
     }
 
+    private func startCheckingRemoteVideo() {
+        timer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { _ in
+            if self.isRemoteVideoActive {
+                self.stopCheckingRemoteVideo()
+            } else {
+                self.pairUsers()
+            }
+        }
+    }
+
+    private func stopCheckingRemoteVideo() {
+        timer?.invalidate()
+        timer = nil
+    }
     private func pairUsers() {
         webRTCHandler.offer { sdp in
             signalingHandler.send(sdp: sdp)
@@ -77,12 +90,12 @@ extension VideoView: WebRTCManager {
         DispatchQueue.main.async {
             switch state {
             case .connected, .completed:
-                debugPrint("CONNECTED YAY")
                 self.isRemoteVideoActive = true
+                debugPrint("CONNECTED, BoolState: \(self.isRemoteVideoActive)")
             case .disconnected, .failed, .closed:
-                debugPrint("DISCONNECTED")
                 disconnect()
                 self.isRemoteVideoActive = false
+                debugPrint("DISCONNECTED, BoolState: \(self.isRemoteVideoActive)")
             default:
                 break
             }
@@ -185,7 +198,7 @@ struct RemoteVideoView: UIViewRepresentable {
                 switch result {
                 case let .success(nsfwConfidence: confidence):
                     DispatchQueue.main.async {
-                        if confidence > 0.72 {
+                        if confidence > 0.90 {
                             self.applyCensoring()
                         } else {
                             self.scheduleRemoveCensoring()
