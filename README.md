@@ -79,3 +79,8 @@ SwiftUI: The framework used to build the user interface.
 The documentation and examples in this demo app was a great help: https://github.com/stasel/WebRTC-iOS 
 
 *I would love to hear feature requests! I am aware of a memory leak involving navigating between the video call screen and join screen. The biggest issue currently is that video calls can only be joined once unless the app is closed and reopened.*
+
+
+# Example of the waiting screen \(tricked  into bluring\):
+
+<img src="https://github.com/Rogeatic/Ai-Censored-Dating-App/blob/main/IMG_7613.PNG?raw=true" alt="Screenshot" width="400">
