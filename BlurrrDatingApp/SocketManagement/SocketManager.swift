@@ -38,12 +38,11 @@ class StarscreamWebSocket: WebSocketHandler {
 }
 
 extension StarscreamWebSocket: Starscream.WebSocketDelegate {
-    
-    func didReceive(event: Starscream.WebSocketEvent, client: Starscream.WebSocket) {
+    func didReceive(event: Starscream.WebSocketEvent, client: any WebSocketClient) {
         switch event {
         case .connected:
             self.delegate?.webSocketDidConnect(self)
-        case .disconnected:
+        case .disconnected(_, _):
             self.delegate?.webSocketDidDisconnect(self)
         case .text:
             debugPrint("Warning: Expected to receive data format but received a string. Check the websocket server config.")

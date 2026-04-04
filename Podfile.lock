@@ -14,10 +14,14 @@ PODS:
     - GTMSessionFetcher/Core (< 4.0, >= 3.3)
   - GTMSessionFetcher/Core (3.5.0)
   - NSFWDetector (1.1.2)
+  - Starscream (4.0.8)
+  - WebRTC-SDK (114.5735.10)
 
 DEPENDENCIES:
   - GoogleSignIn
   - NSFWDetector
+  - Starscream
+  - WebRTC-SDK (~> 114.0)
 
 SPEC REPOS:
   trunk:
@@ -26,6 +30,8 @@ SPEC REPOS:
     - GTMAppAuth
     - GTMSessionFetcher
     - NSFWDetector
+    - Starscream
+    - WebRTC-SDK
 
 SPEC CHECKSUMS:
   AppAuth: 501c04eda8a8d11f179dbe8637b7a91bb7e5d2fa
@@ -33,7 +39,9 @@ SPEC CHECKSUMS:
   GTMAppAuth: f69bd07d68cd3b766125f7e072c45d7340dea0de
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
   NSFWDetector: d6eca9759743b5e43778818078d53711576e929f
+  Starscream: 19b5533ddb925208db698f0ac508a100b884a1b9
+  WebRTC-SDK: 8c0edd05b880a39648118192c252667ea06dea51
 
-PODFILE CHECKSUM: 1bbedd85df1a5bed0ea3d0002667544f7609a1f7
+PODFILE CHECKSUM: bb92c4cf1d425134f91859c644e9588f5c9db60b
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

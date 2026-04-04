@@ -1,194 +1,200 @@
 import SwiftUI
 
 struct ContentView: View {
+    let signalingURL: URL
+    let iceServers: [String]
+
     @State private var isUserSignedIn: Bool = UserDefaults.standard.bool(forKey: "isUserSignedIn")
     @State private var displayName: String = UserDefaults.standard.string(forKey: "displayName") ?? ""
     @State private var email: String = UserDefaults.standard.string(forKey: "email") ?? ""
     @State private var avatarURL: URL = {
-        if let urlString = UserDefaults.standard.string(forKey: "avatarURL"),
-           let url = URL(string: urlString) {
-            return url
-        }
+        if let s = UserDefaults.standard.string(forKey: "avatarURL"), let u = URL(string: s) { return u }
         return URL(string: "https://example.com/default-avatar.png")!
     }()
     @State private var idToken: String = UserDefaults.standard.string(forKey: "idToken") ?? ""
     @State private var isBlurred: Bool = false
     @State private var showUserPopover: Bool = false
-    @State private var isLoading: Bool = true
+    @State private var isInCall: Bool = false
 
-    var signalingHandler: SignalingHandler
-    var webRTCHandler: WebRTCHandler
-
-    init(signalingHandler: SignalingHandler, webRTCHandler: WebRTCHandler) {
-        self.signalingHandler = signalingHandler
-        self.webRTCHandler = webRTCHandler
-    }
+    // Lazily created when the user enters a call; nilled out when they leave
+    @State private var webRTCHandler: WebRTCHandler?
+    @State private var signalingHandler: SignalingHandler?
 
     var body: some View {
         NavigationView {
             if !isUserSignedIn {
-                LoginView(isUserSignedIn: $isUserSignedIn, displayName: $displayName, email: $email, avatarURL: $avatarURL, idToken: $idToken)
+                LoginView(
+                    isUserSignedIn: $isUserSignedIn,
+                    displayName: $displayName,
+                    email: $email,
+                    avatarURL: $avatarURL,
+                    idToken: $idToken
+                )
             } else {
-                VStack {
-                    HStack {
-                        VStack {
-                            Button(action: {
-                                showUserPopover.toggle()
-                            }) {
-                                AsyncImage(url: avatarURL) { phase in
-                                    if let image = phase.image {
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 40, height: 40)
-                                            .clipShape(Circle())
-                                    } else if phase.error != nil {
-                                        Image(systemName: "person.fill")
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 40, height: 40)
-                                            .clipShape(Circle())
-                                    } else {
-                                        // Loading wheel over icon
-                                        //ProgressView()
-                                        //    .frame(width: 40, height: 40)
-                                    }
-                                }
-                            }
-                            .popover(isPresented: $showUserPopover) {
-                                VStack(alignment: .center) {
-                                    AsyncImage(url: avatarURL) { phase in
-                                        if let image = phase.image {
-                                            image
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(width: 60, height: 60) // Increased the frame size
-                                                .clipShape(Circle())
-                                        } else if phase.error != nil {
-                                            Image(systemName: "person.fill")
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(width: 60, height: 60) // Increased the frame size
-                                                .clipShape(Circle())
-                                        } else {
-                                            ProgressView()
-                                                .frame(width: 60, height: 60) // Increased the frame size
-                                        }
-                                    }
-
-                                    Text(displayName)
-                                        .font(.headline)
-                                        .padding(.top, 5)
-                                    Text(email)
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                        .padding(.bottom, 10) // Add some spacing below the email
-
-                                    Button(action: {
-                                        // Sign out action
-                                        signOut()
-                                    }) {
-                                        Text("Sign Out")
-                                            .foregroundColor(.red)
-                                            .padding(.horizontal, 25) // Increased padding
-                                            .padding(.vertical, 12) // Increased padding
-                                            .background(Color.gray.opacity(0.2))
-                                            .cornerRadius(8)
-                                    }
-                                    .padding(.bottom, 5)
-                                    .padding(.top, 10)
-
-                                    Button(action: {
-                                        // Cancel action
-                                        showUserPopover = false
-                                    }) {
-                                        Text("Cancel")
-                                            .foregroundColor(.black)
-                                            .padding(.horizontal, 20) // Increased padding
-                                            .padding(.vertical, 10) // Increased padding
-                                            .background(Color.gray.opacity(0.2))
-                                            .cornerRadius(8)
-                                    }
-                                }
-                                .frame(width: 230, height: 260) // Increased the height
-                                .padding()
-                                .background(Color.white)
-                                .cornerRadius(15)
-                            }
-                        }
-                        .padding(.leading, 16) // Adjust left padding
-                        .padding(.top, 16) // Adjust top padding
-
-                        Spacer()
-                    }
-                    .padding(.top, 0) // Remove extra top padding
-
-                    Spacer() // Add a spacer to push the content towards the center
-
-                    VStack {
-                        if isLoading {
-                            ProgressView("Preparing Ai")
-                                .padding()
-                        } else {
-                            CameraPreviewView(isBlurred: $isBlurred)
-                                .cornerRadius(15)
-                                .frame(height: UIScreen.main.bounds.size.height * 0.50)
-                                .padding()
-                                .blur(radius: isBlurred ? 100 : 0)
-                                .background(isBlurred ? AnyView(LinearGradient(gradient: Gradient(colors: [Color.darkTeal, Color.darkTeal1]), startPoint: .topLeading, endPoint: .bottomTrailing)) : AnyView(Color.clear))
-                                .animation(.easeInOut, value: isBlurred)
-                                .cornerRadius(15)
-                                .padding(.bottom, 10)
-
-                            Text("Hello, \(displayName)")
-
-                            NavigationLink(destination: VideoView(signalingHandler: signalingHandler, webRTCHandler: webRTCHandler)) {
-                                Text("Go to Video View")
-                                    .padding()
-                                    .background(Color.blue)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(8)
-                            }
-                            .padding()
-                        }
-                    }
-
-                    Spacer() // Add another spacer here to center the content vertically
-                }
-                .padding()
-                .background(Color.white)
-                .onTapGesture {
-                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                }
-                .onAppear {
-                    DispatchQueue.global(qos: .userInitiated).async {
-                        DispatchQueue.main.async {
-                            isLoading = false
-                        }
-                    }
-                }
-                .onAppear {
-                    // Start camera session when view appears
-                    NotificationCenter.default.post(name: Notification.Name("startCameraSession"), object: nil)
-                }
-                .onDisappear {
-                    // Stop camera session when view disappears
-                    NotificationCenter.default.post(name: Notification.Name("stopCameraSession"), object: nil)
-                }
+                mainContent
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
 
+    // MARK: - Main Content
+
+    private var mainContent: some View {
+        VStack(spacing: 0) {
+            // Top bar
+            HStack {
+                avatarButton
+                    .padding([.leading, .top], 16)
+                Spacer()
+            }
+
+            Spacer()
+
+            // Camera preview (uses its own AVCaptureSession — separate from WebRTC)
+            ZStack {
+                // Camera view
+                CameraPreviewView(isBlurred: $isBlurred)
+                    .cornerRadius(15)
+                    .frame(height: UIScreen.main.bounds.size.height * 0.50)
+                    .blur(radius: isBlurred ? 20 : 0)
+                    .mask(
+                        RoundedRectangle(cornerRadius: 12)
+                            .padding(3)
+                            .blur(radius: 26)
+                    )
+                
+                // Glow layer — bleeds outward
+                if isBlurred {
+                    LinearGradient.teal
+                        .cornerRadius(15)
+                        .blur(radius: 60)
+                        .scaleEffect(1.15)
+                        .opacity(0.9)
+                }
+
+                // Text on top of everything
+                if isBlurred {
+                    Text("Shielding Your Eyes")
+                        .font(.headline.bold())
+                        .foregroundColor(.white)
+                }
+            }
+            .frame(height: UIScreen.main.bounds.size.height * 0.50)
+            .padding()
+            .animation(.easeInOut, value: isBlurred)
+            .padding(.bottom, 10)
+
+            Text("Hello, \(displayName)")
+                .font(.headline)
+                .padding(.bottom, 8)
+                .foregroundColor(Color("appOrange"))
+
+            // Navigate to video call — creates fresh handlers each time
+            NavigationLink(
+                destination: callDestination,
+                isActive: $isInCall
+            ) {
+                Button(action: enterCall) {
+                    Label("Start Video Call", systemImage: "video.fill")
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .tealGradientBackground(cornerRadius: 14)
+                        .padding(.horizontal)
+                }
+            }
+            .padding(.bottom, 32)
+
+            Spacer()
+        }
+        .background(Color(.systemBackground))
+        .onAppear {
+            NotificationCenter.default.post(name: .init("startCameraSession"), object: nil)
+        }
+        .onDisappear {
+            NotificationCenter.default.post(name: .init("stopCameraSession"), object: nil)
+        }
+    }
+
+    // MARK: - Call Destination
+
+    @ViewBuilder
+    private var callDestination: some View {
+        if let rtc = webRTCHandler, let sig = signalingHandler {
+            VideoView(signalingHandler: sig, webRTCHandler: rtc)
+                .onDisappear {
+                    // Tear down handlers when leaving call
+                    webRTCHandler = nil
+                    signalingHandler = nil
+                }
+        } else {
+            ProgressView("Setting up call...")
+        }
+    }
+
+    private func enterCall() {
+        // Create fresh instances every time a call starts
+        let newRTC = WebRTCHandler(iceServers: iceServers)
+        let newSig = SignalingHandler(webSocket: StarscreamWebSocket(url: signalingURL))
+        webRTCHandler = newRTC
+        signalingHandler = newSig
+        isInCall = true
+    }
+
+    // MARK: - Avatar / Popover
+
+    private var avatarButton: some View {
+        Button(action: { showUserPopover.toggle() }) {
+            AsyncImage(url: avatarURL) { phase in
+                if let image = phase.image {
+                    image.resizable().aspectRatio(contentMode: .fill)
+                } else {
+                    Image(systemName: "person.fill").resizable()
+                }
+            }
+            .frame(width: 40, height: 40)
+            .clipShape(Circle())
+        }
+        .popover(isPresented: $showUserPopover) {
+            userPopoverContent
+        }
+    }
+
+    private var userPopoverContent: some View {
+        VStack(spacing: 12) {
+            AsyncImage(url: avatarURL) { phase in
+                if let image = phase.image {
+                    image.resizable().aspectRatio(contentMode: .fill)
+                } else {
+                    Image(systemName: "person.fill").resizable()
+                }
+            }
+            .frame(width: 60, height: 60)
+            .clipShape(Circle())
+
+            Text(displayName).font(.headline)
+            Text(email).font(.subheadline).foregroundColor(.secondary)
+
+            Button(role: .destructive, action: signOut) {
+                Text("Sign Out")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+
+            Button("Cancel") { showUserPopover = false }
+                .buttonStyle(.bordered)
+        }
+        .frame(width: 220)
+        .padding()
+    }
+
+    // MARK: - Sign Out
+
     private func signOut() {
         isUserSignedIn = false
         showUserPopover = false
-
-        // Clear user defaults
-        UserDefaults.standard.set(false, forKey: "isUserSignedIn")
-        UserDefaults.standard.set(nil, forKey: "displayName")
-        UserDefaults.standard.set(nil, forKey: "email")
-        UserDefaults.standard.set(nil, forKey: "avatarURL")
-        UserDefaults.standard.set(nil, forKey: "idToken")
+        let keys = ["isUserSignedIn", "displayName", "email", "avatarURL", "idToken"]
+        keys.forEach { UserDefaults.standard.removeObject(forKey: $0) }
     }
 }

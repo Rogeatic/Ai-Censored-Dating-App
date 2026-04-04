@@ -9,62 +9,67 @@ struct LoginView: View {
     @Binding var idToken: String
 
     var body: some View {
-        VStack {
-            Text("Simply Login To Begin Greatness-")
-            signInButton
-                .frame(width: 200, height: 50)
-                .padding()
-        }
-    }
+        VStack(spacing: 32) {
+            Spacer()
 
-    private var signInButton: some View {
-        Button(action: {
-            signInWithGoogle()
-        }) {
-            Text("Sign In with Google")
-                .padding()
-                .background(LinearGradient(gradient: Gradient(colors: [Color.darkTeal, Color.darkTeal1]), startPoint: .topLeading, endPoint: .bottomTrailing))
+            // Logo / branding area
+            VStack(spacing: 12) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 60))
+                    .foregroundStyle(LinearGradient.teal)
+
+                Text("Blurrr")
+                    .font(.largeTitle.bold())
+                    .foregroundStyle(LinearGradient.teal)
+
+                Text("Sign in to begin")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+
+            // Sign in button
+            Button(action: signInWithGoogle) {
+                HStack(spacing: 10) {
+                    Image(systemName: "g.circle.fill")
+                        .font(.title3)
+                    Text("Sign In with Google")
+                        .fontWeight(.semibold)
+                }
                 .foregroundColor(.white)
-                .cornerRadius(8)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .tealGradientBackground(cornerRadius: 14)
+                .padding(.horizontal, 32)
+            }
+
+            Spacer()
         }
+        .background(Color(.systemBackground))
     }
 
     private func signInWithGoogle() {
-        guard let clientID = GIDSignIn.sharedInstance.configuration?.clientID else { return }
-        let signInConfig = GIDConfiguration(clientID: clientID)
-
         guard let rootViewController = UIApplication.shared.windows.first?.rootViewController else {
             print("Failed to retrieve the root view controller")
             return
         }
 
-        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { signInResult, error in
-            if let error = error {
-                print(error.localizedDescription)
-                return
-            }
+        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { result, error in
+            if let error { print(error.localizedDescription); return }
+            guard let user = result?.user else { return }
 
-            guard let signInResult = signInResult else { return }
-            let user = signInResult.user
-
-            displayName = user.profile?.name ?? ""
-            email = user.profile?.email ?? ""
-            avatarURL = user.profile?.imageURL(withDimension: 100) ?? URL(string: "https://example.com/default-avatar.png")!
-            idToken = user.idToken?.tokenString ?? ""
+            displayName    = user.profile?.name ?? ""
+            email          = user.profile?.email ?? ""
+            avatarURL      = user.profile?.imageURL(withDimension: 100) ?? URL(string: "https://example.com/default-avatar.png")!
+            idToken        = user.idToken?.tokenString ?? ""
             isUserSignedIn = true
-            
-            // Save user details in UserDefaults
-            UserDefaults.standard.set(isUserSignedIn, forKey: "isUserSignedIn")
-            UserDefaults.standard.set(displayName, forKey: "displayName")
-            UserDefaults.standard.set(email, forKey: "email")
-            UserDefaults.standard.set(avatarURL.absoluteString, forKey: "avatarURL")
-            UserDefaults.standard.set(idToken, forKey: "idToken")
-        }
-    }
-}
 
-struct LoginView_Previews: PreviewProvider {
-    static var previews: some View {
-        LoginView(isUserSignedIn: .constant(false), displayName: .constant(""), email: .constant(""), avatarURL: .constant(URL(string: "https://example.com/default-avatar.png")!), idToken: .constant(""))
+            UserDefaults.standard.set(true,                       forKey: "isUserSignedIn")
+            UserDefaults.standard.set(displayName,                forKey: "displayName")
+            UserDefaults.standard.set(email,                      forKey: "email")
+            UserDefaults.standard.set(avatarURL.absoluteString,   forKey: "avatarURL")
+            UserDefaults.standard.set(idToken,                    forKey: "idToken")
+        }
     }
 }

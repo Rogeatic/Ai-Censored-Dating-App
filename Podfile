@@ -2,11 +2,19 @@ platform :ios, '17.5'
 
 target 'BlurrrDatingApp' do
   use_frameworks!
-  # Pods for BlurrrDatingApp
   pod 'NSFWDetector'
   pod 'GoogleSignIn'
-  #pod 'Starscream'
+  pod 'Starscream'
+  pod 'WebRTC-SDK', '~> 114.0'
+end
 
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '17.5'
+      config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+    end
+  end
 end
 
 #post_install do |installer|
