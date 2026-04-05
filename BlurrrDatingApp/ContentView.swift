@@ -50,9 +50,8 @@ struct ContentView: View {
 
             Spacer()
 
-            // Camera preview (uses its own AVCaptureSession — separate from WebRTC)
+            // Camera preview
             ZStack {
-                // Camera view
                 CameraPreviewView(isBlurred: $isBlurred)
                     .cornerRadius(15)
                     .frame(height: UIScreen.main.bounds.size.height * 0.50)
@@ -62,8 +61,7 @@ struct ContentView: View {
                             .padding(3)
                             .blur(radius: 26)
                     )
-                
-                // Glow layer — bleeds outward
+
                 if isBlurred {
                     LinearGradient.teal
                         .cornerRadius(15)
@@ -72,7 +70,6 @@ struct ContentView: View {
                         .opacity(0.9)
                 }
 
-                // Text on top of everything
                 if isBlurred {
                     Text("Shielding Your Eyes")
                         .font(.headline.bold())
@@ -84,12 +81,11 @@ struct ContentView: View {
             .animation(.easeInOut, value: isBlurred)
             .padding(.bottom, 10)
 
-            Text("Hello, \(displayName)")
+            Text("Hello, \(displayName.components(separatedBy: " ").first ?? displayName)")
                 .font(.headline)
                 .padding(.bottom, 8)
                 .foregroundColor(Color("appOrange"))
 
-            // Navigate to video call — creates fresh handlers each time
             NavigationLink(
                 destination: callDestination,
                 isActive: $isInCall
@@ -146,15 +142,10 @@ struct ContentView: View {
 
     private var avatarButton: some View {
         Button(action: { showUserPopover.toggle() }) {
-            AsyncImage(url: avatarURL) { phase in
-                if let image = phase.image {
-                    image.resizable().aspectRatio(contentMode: .fill)
-                } else {
-                    Image(systemName: "person.fill").resizable()
-                }
-            }
-            .frame(width: 40, height: 40)
-            .clipShape(Circle())
+            Image(systemName: "ellipsis")
+                .font(.title2)
+                .foregroundColor(.primary)
+                .frame(width: 40, height: 40)
         }
         .popover(isPresented: $showUserPopover) {
             userPopoverContent
@@ -196,5 +187,58 @@ struct ContentView: View {
         showUserPopover = false
         let keys = ["isUserSignedIn", "displayName", "email", "avatarURL", "idToken"]
         keys.forEach { UserDefaults.standard.removeObject(forKey: $0) }
+    }
+}
+
+// MARK: - Home Screen Blobs
+// Three blobs spread across full screen width, centers at the edge of the frame
+// so they appear half-visible peaking in from top or bottom.
+
+struct HomeBlobs: View {
+    // Each blob drifts independently
+    @State private var o1: CGFloat = 0
+    @State private var o2: CGFloat = 0
+    @State private var o3: CGFloat = 0
+
+    var body: some View {
+        GeometryReader { geo in
+            let w = geo.size.width
+            ZStack {
+                // Left blob
+                Circle()
+                    .fill(Color("appOrange").opacity(0.55))
+                    .frame(width: 200, height: 200)
+                    .blur(radius: 40)
+                    .position(x: w * 0.18, y: o1)
+
+                // Centre blob — largest
+                Circle()
+                    .fill(Color("appOrange").opacity(0.45))
+                    .frame(width: 240, height: 240)
+                    .blur(radius: 50)
+                    .position(x: w * 0.52, y: o2)
+
+                // Right blob
+                Circle()
+                    .fill(Color("appOrange").opacity(0.50))
+                    .frame(width: 190, height: 190)
+                    .blur(radius: 38)
+                    .position(x: w * 0.85, y: o3)
+            }
+            .frame(width: w, height: geo.size.height)
+            .onAppear {
+                let mid = geo.size.height / 2
+                o1 = mid; o2 = mid; o3 = mid
+                withAnimation(.easeInOut(duration: 4.5).repeatForever(autoreverses: true)) {
+                    o1 = mid + 18
+                }
+                withAnimation(.easeInOut(duration: 3.8).repeatForever(autoreverses: true).delay(0.7)) {
+                    o2 = mid - 14
+                }
+                withAnimation(.easeInOut(duration: 5.2).repeatForever(autoreverses: true).delay(1.3)) {
+                    o3 = mid + 22
+                }
+            }
+        }
     }
 }

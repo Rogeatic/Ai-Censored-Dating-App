@@ -287,59 +287,14 @@ final class NSFWCoordinator: NSObject, RTCVideoRenderer {
 // MARK: - Connecting View
 
 struct ConnectingView: View {
-    @State private var animate = false
-
     var body: some View {
         ZStack {
-            // Semi-transparent dark background — lets local video show through
-            Color.black.opacity(0.55).ignoresSafeArea()
+            // Always black — unaffected by light/dark mode
+            Color(red: 0, green: 0, blue: 0).ignoresSafeArea()
+ 
+            BlobField(color: Color.darkTeal.opacity(0.25), count: 6, spread: 140)
+                .ignoresSafeArea()
 
-            // Dancing teal blobs
-            ZStack {
-                // Blob 1
-                Circle()
-                    .fill(Color.darkTeal.opacity(0.7))
-                    .frame(width: 280, height: 280)
-                    .blur(radius: 60)
-                    .offset(
-                        x: animate ? -60 : 60,
-                        y: animate ? -80 : 40
-                    )
-                    .animation(
-                        .easeInOut(duration: 3.2).repeatForever(autoreverses: true),
-                        value: animate
-                    )
-
-                // Blob 2
-                Circle()
-                    .fill(Color.darkTeal1.opacity(0.6))
-                    .frame(width: 220, height: 220)
-                    .blur(radius: 50)
-                    .offset(
-                        x: animate ? 70 : -50,
-                        y: animate ? 60 : -70
-                    )
-                    .animation(
-                        .easeInOut(duration: 2.7).repeatForever(autoreverses: true),
-                        value: animate
-                    )
-
-                // Blob 3 — smaller accent
-                Circle()
-                    .fill(Color.darkTeal.opacity(0.5))
-                    .frame(width: 160, height: 160)
-                    .blur(radius: 40)
-                    .offset(
-                        x: animate ? 30 : -80,
-                        y: animate ? 100 : -30
-                    )
-                    .animation(
-                        .easeInOut(duration: 3.8).repeatForever(autoreverses: true),
-                        value: animate
-                    )
-            }
-
-            // Text on top
             VStack(spacing: 16) {
                 ProgressView()
                     .tint(Color("appOrange"))
@@ -349,6 +304,6 @@ struct ConnectingView: View {
                     .foregroundColor(Color("appOrange"))
             }
         }
-        .onAppear { animate = true }
+        .colorScheme(.dark)
     }
 }

@@ -1,6 +1,7 @@
 import SwiftUI
 import UIKit
 import GoogleSignIn
+import NSFWDetector
 
 // MARK: - Constants
 
@@ -22,6 +23,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: googleClientID)
+
+        // Pre-warm NSFWDetector in background — loads CoreML model early
+        // so there's no delay or black screen when the camera first appears
+        DispatchQueue.global(qos: .background).async {
+            _ = NSFWDetector.shared
+        }
+
         return true
     }
 
@@ -35,16 +43,77 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 @main
 struct BlurrrApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @State private var isLoading = true
 
     var body: some Scene {
         WindowGroup {
-            // Pass a factory closure instead of a single shared instance.
-            // VideoView calls makeWebRTCHandler() each time it appears,
-            // so reconnecting always gets a fresh PeerConnection.
-            ContentView(
-                signalingURL: signalingServerURL,
-                iceServers: iceServers
-            )
+            if isLoading {
+                SplashView()
+                    .onAppear {
+                        let start = Date()
+
+                        // 1. Pre-warm NSFW detector
+                        // 2. Restore Google Sign-In session (loads profile image)
+                        // 3. Enforce minimum 1.5s splash duration
+                        DispatchQueue.global(qos: .background).async {
+                            _ = NSFWDetector.shared
+
+                            DispatchQueue.main.async {
+                                GIDSignIn.sharedInstance.restorePreviousSignIn { _, _ in
+                                    let elapsed = Date().timeIntervalSince(start)
+                                    let remaining = max(0, 3.0 - elapsed)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + remaining) {
+                                        withAnimation(.easeInOut(duration: 0.5)) {
+                                            isLoading = false
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+            } else {
+                ContentView(
+                    signalingURL: signalingServerURL,
+                    iceServers: iceServers
+                )
+                .transition(.opacity)
+            }
+        }
+    }
+}
+
+// MARK: - Splash Screen
+
+struct SplashView: View {
+    @State private var iconScale: CGFloat = 0.85
+
+    var body: some View {
+        ZStack {
+            Color.white.ignoresSafeArea()
+
+            // Large soft blobs — heavily blurred, atmospheric background
+            BlobField(color: Color("appOrange").opacity(0.12), count: 4, spread: 200)
+                .ignoresSafeArea()
+
+            // Icon + spinner
+            VStack(spacing: 24) {
+                Image("Blurrr Icon transparent")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 140, height: 140)
+                    .scaleEffect(iconScale)
+                    .shadow(color: Color("appOrange").opacity(0.6), radius: 24)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.55), value: iconScale)
+
+                ProgressView()
+                    .tint(Color("appOrange"))
+                    .scaleEffect(1.2)
+            }
+        }
+        .onAppear {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.55)) {
+                iconScale = 1.05
+            }
         }
     }
 }
